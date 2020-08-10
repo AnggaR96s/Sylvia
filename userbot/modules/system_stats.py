@@ -17,7 +17,7 @@ from shutil import which
 import psutil
 from telethon import __version__, version
 
-from userbot import ALIVE_NAME, CMD_HELP, IMG, StartTime, bot
+from userbot import ALIVE_NAME, CMD_HELP, DB_URI, IMG, StartTime, bot
 from userbot.events import register
 
 # ================= CONSTANT =================
@@ -109,6 +109,27 @@ def get_size(bytes, suffix="B"):
         if bytes < factor:
             return f"{bytes:.2f}{unit}{suffix}"
         bytes /= factor
+
+
+def check_data_base_heal_th():
+    is_database_working = False
+    output = "Failing"
+
+    if not DB_URI:
+        return is_database_working, output
+
+    from userbot.modules.sql_helper import SESSION
+
+    try:
+        SESSION.execute("SELECT 1")
+    except Exception as e:
+        output = f"Failing {str(e)}"
+        is_database_working = False
+    else:
+        output = "Connected"
+        is_database_working = True
+
+    return is_database_working, output
 
 
 @register(outgoing=True, pattern=r"^\.sysd$")
@@ -204,6 +225,7 @@ async def amireallyalive(alive):
     """ For .on command, check if the bot is running.  """
     uptime = await get_readable_time((time.time() - StartTime))
     img = IMG
+    db = check_data_base_heal_th()
     caption = (
         "`"
         "I'm alive, at your services....\n"
@@ -211,7 +233,8 @@ async def amireallyalive(alive):
         f"👤 User             : {DEFAULTUSER}\n\n"
         f"🐍 Python           : {python_version()}\n\n"
         f"💻 Telethon version : {version.__version__}\n\n"
-        f"🕒 Bot Uptime       : {uptime}\n"
+        f"🕒 Bot Uptime       : {uptime}\n\n"
+        f"💾 Database Status  : {db}\n"
         f"-------------------------------\n"
         "`"
     )
