@@ -15,6 +15,7 @@ cryptg
 deezloader
 dnspython
 emoji
+fonttools
 geopy
 git+https://github.com/johnwmillr/LyricsGenius.git
 gitpython
