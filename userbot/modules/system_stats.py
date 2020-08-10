@@ -238,8 +238,19 @@ async def amireallyalive(alive):
         f"-------------------------------\n"
         "`"
     )
-    await bot.send_file(alive.chat_id, img, caption=caption)
-    await alive.delete()
+    if IMG:
+        try:
+            img = IMG
+            await bot.send_file(alive.chat_id, img, caption=caption)
+            await alive.delete()
+        except BaseException:
+            await alive.edit(
+                caption + "\n\n *`The provided logo is invalid."
+                "\nMake sure the link is directed to the logo picture`"
+            )
+
+    else:
+        await alive.edit(caption)
 
 
 @register(outgoing=True, pattern=r"^\.aliveu")
