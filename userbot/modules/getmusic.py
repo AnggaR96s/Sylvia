@@ -99,7 +99,7 @@ async def _(event):
     await event.client.send_file(
         event.chat_id,
         loa,
-        force_document=True,
+        supports_streaming=True,
         thumb=thumb_image,
         allow_cache=False,
         caption=query,
