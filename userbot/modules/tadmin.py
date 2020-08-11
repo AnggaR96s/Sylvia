@@ -22,7 +22,7 @@ from telethon.tl.types import (
     MessageEntityMentionName,
 )
 
-from userbot import BOTLOG_CHATID
+from userbot import BOTLOG_CHATID, CMD_HELP
 from userbot.events import register
 
 if BOTLOG_CHATID is None:
@@ -32,8 +32,8 @@ else:
     BOTLOG_CHATID = BOTLOG_CHATID
 
 # =================== CONSTANT ===================
-NO_ADMIN = "`I am not an admin nub nibba!`"
-NO_PERM = "`I don't have sufficient permissions! This is so sed. Alexa play despacito`"
+NO_ADMIN = "`I am not an admin!`"
+NO_PERM = "`I don't have sufficient permissions!`"
 NO_SQL = "`Running on Non-SQL mode!`"
 
 
@@ -61,7 +61,7 @@ async def tmuter(catty):
             cattime = reason[0]
             reason = None
     else:
-        await catty.edit("you havent mentioned time check `.info tadmin`")
+        await catty.edit("You havent mentioned time check `.help tadmin`")
         return
     self_user = await catty.client.get_me()
     ctime = await extract_time(catty, cattime)
@@ -111,8 +111,8 @@ async def tmuter(catty):
                     f"MUTTED_UNTILL : `{cattime}`",
                 )
         # Announce to logging group
-    except UserIdInvalidError:
-        return await catty.edit("`Uh oh my mute logic broke!`")
+    except Exception:
+        return await catty.edit(f"`Uh oh my mute logic broke!` or {NO_PERM}")
 
 
 @register(outgoing=True, pattern=r"^\.untmute(?: |$)(.*)")
@@ -126,7 +126,7 @@ async def unmoot(catty):
         await catty.edit(NO_ADMIN)
         return
     # If admin or creator, inform the user and start unmuting
-    await catty.edit("```Unmuting...```")
+    await catty.edit("`Unmuting...`")
     user = await get_user_from_event(catty)
     user = user[0]
     if user:
@@ -142,7 +142,7 @@ async def unmoot(catty):
             )
         )
         await catty.edit("Unmuted Successfully")
-    except UserIdInvalidError:
+    except UserIdInvalidError or EditBannedRequest:
         await catty.edit("`Uh oh my unmute logic broke!`")
         return
     if BOTLOG:
@@ -178,7 +178,7 @@ async def ban(catty):
             cattime = reason[0]
             reason = None
     else:
-        await catty.edit("you havent mentioned time check `.info tadmin`")
+        await catty.edit("You havent mentioned time check `.help tadmin`")
         return
     self_user = await catty.client.get_me()
     ctime = await extract_time(catty, cattime)
@@ -199,7 +199,7 @@ async def ban(catty):
                 ChatBannedRights(until_date=ctime, view_messages=True),
             )
         )
-    except BadRequestError:
+    except Exception:
         await catty.edit(NO_PERM)
         return
     # Helps ban group join spammers more easily
@@ -314,3 +314,16 @@ async def extract_time(cat, time_val):
         )
     )
     return ""
+
+
+CMD_HELP.update(
+    {
+        "tadmin": ">`.tmute` <time> <reason>"
+        "\nUsage: Temporary mute user."
+        "\n\n>`.untmute`"
+        "\nUsage: Unmute temporary muted user."
+        "\n\n>`.tban` <time> <reason>"
+        "\nUsage: Temporary ban user."
+        "\n\n`Time example: 1m(inute), 1h(our), 1d(ay), 1w(eek)`"
+    }
+)
