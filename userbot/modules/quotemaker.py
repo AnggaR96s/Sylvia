@@ -125,7 +125,7 @@ async def process(msg, user, client, reply, replied=None):
             title = details.participant.rank if details.participant.rank else "Creator"
         elif isinstance(details.participant, types.ChannelParticipantAdmin):
             title = details.participant.rank if details.participant.rank else "Admin"
-    except TypeError:
+    except Exception:
         pass
     titlewidth = font2.getsize(title)[0]
 
