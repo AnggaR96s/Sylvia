@@ -85,8 +85,8 @@ async def tmuter(catty):
         if reason:
             await catty.edit(
                 f"{user.first_name} was muted in {catty.chat.title}\n"
-                f"Mutted until {cattime}\n"
-                f"Reason:`{reason}`"
+                f"Muted for {cattime}\n"
+                f"Reason: `{reason}`"
             )
             if BOTLOG:
                 await catty.client.send_message(
@@ -94,7 +94,7 @@ async def tmuter(catty):
                     "#TMUTE\n"
                     f"USER: [{user.first_name}](tg://user?id={user.id})\n"
                     f"CHAT: {catty.chat.title}(`{catty.chat_id}`)\n"
-                    f"MUTTED_UNTILL : `{cattime}`\n"
+                    f"MUTED FOR : `{cattime}`\n"
                     f"REASON : {reason}",
                 )
         else:
@@ -108,7 +108,7 @@ async def tmuter(catty):
                     "#TMUTE\n"
                     f"USER: [{user.first_name}](tg://user?id={user.id})\n"
                     f"CHAT: {catty.chat.title}(`{catty.chat_id}`)\n"
-                    f"MUTTED_UNTILL : `{cattime}`",
+                    f"MUTED FOR : `{cattime}`",
                 )
         # Announce to logging group
     except Exception:
@@ -218,8 +218,8 @@ async def ban(catty):
     if reason:
         await catty.edit(
             f"{user.first_name} was banned in {catty.chat.title}\n"
-            f"banned until {cattime}\n"
-            f"Reason:`{reason}`"
+            f"Temp. Banned for {cattime}\n"
+            f"Reason: `{reason}`"
         )
         if BOTLOG:
             await catty.client.send_message(
@@ -227,13 +227,13 @@ async def ban(catty):
                 "#TBAN\n"
                 f"USER: [{user.first_name}](tg://user?id={user.id})\n"
                 f"CHAT: {catty.chat.title}(`{catty.chat_id}`)\n"
-                f"BANNED_UNTILL : `{cattime}`\n"
+                f"TEMP. BANNED FOR : `{cattime}`\n"
                 f"REASON : {reason}",
             )
     else:
         await catty.edit(
             f"{user.first_name} was banned in {catty.chat.title}\n"
-            f"banned until {cattime}\n"
+            f"Temp. banned for {cattime}\n"
         )
         if BOTLOG:
             await catty.client.send_message(
@@ -241,7 +241,7 @@ async def ban(catty):
                 "#TBAN\n"
                 f"USER: [{user.first_name}](tg://user?id={user.id})\n"
                 f"CHAT: {catty.chat.title}(`{catty.chat_id}`)\n"
-                f"BANNED_UNTILL : `{cattime}`",
+                f"TEMP. BANNED FOR : `{cattime}`",
             )
 
 
