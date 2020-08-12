@@ -228,14 +228,12 @@ async def amireallyalive(alive):
     db = check_data_base_heal_th()
     caption = (
         "`"
-        "I'm alive, at your services....\n"
-        f"-------------------------------\n"
+        "\nUserbot is alive with status:\n\n"
         f"👤 User             : {DEFAULTUSER}\n\n"
         f"🐍 Python           : {python_version()}\n\n"
         f"💻 Telethon version : {version.__version__}\n\n"
         f"🕒 Bot Uptime       : {uptime}\n\n"
         f"💾 Database Status  : {db}\n"
-        f"-------------------------------\n"
         "`"
     )
     if IMG:
