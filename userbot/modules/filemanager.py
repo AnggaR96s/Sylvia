@@ -1,8 +1,12 @@
+import asyncio
 import io
 import os
 import os.path
+import shlex
 import time
 from os.path import exists, isdir
+from typing import Tuple
+
 
 from userbot import CMD_HELP
 from userbot.events import register
@@ -110,6 +114,47 @@ async def lst(event):
         await event.edit(msg)
 
 
+@register(outgoing=True, pattern=r"^\.rm ?(.*)")
+async def lst(event):
+    rm = event.pattern_match.group(1)
+    if rm:
+        path = rm
+    else:
+        await event.edit("`What should i delete?`")
+        return
+    if not exists(path):
+        await event.edit(
+            f"`There is no such directory or file with the name `{rm}` check again"
+        )
+        return
+    cmd = f"rm -rf {path}"
+    if isdir(path):
+        await runcmd(cmd)
+        await event.edit(f"Succesfully removed `{path}` directory")
+    else:
+        await runcmd(cmd)
+        await event.edit(f"Succesfully removed `{path}` file")
+
+
+async def runcmd(cmd: str) -> Tuple[str, str, int, int]:
+    args = shlex.split(cmd)
+    process = await asyncio.create_subprocess_exec(
+        *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+    )
+    stdout, stderr = await process.communicate()
+    return (
+        stdout.decode("utf-8", "replace").strip(),
+        stderr.decode("utf-8", "replace").strip(),
+        process.returncode,
+        process.pid,
+    )
+
+
 CMD_HELP.update(
-    {"file": ">`.ls` <directory>" "\nUsage: Get list file inside directory.\n"}
+    {
+        "file": ">`.ls` <directory/file>"
+        "\nUsage: Get list file inside directory.\n\n"
+        ">`.rm` <directory/file>"
+        "\nUsage: Remove directory/file."
+    }
 )
