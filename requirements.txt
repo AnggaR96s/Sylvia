@@ -7,6 +7,7 @@ beautifulsoup4
 bitlyshortener
 bs4
 bwb
+cairosvg
 cffi
 cfscrape
 covid
@@ -19,6 +20,7 @@ fonttools
 geopy
 git+https://github.com/johnwmillr/LyricsGenius.git
 gitpython
+glitch_this
 google_images_download
 google-api-python-client
 google-auth-oauthlib
@@ -33,6 +35,7 @@ httplib2
 humanize
 jikanpy
 justwatch
+lottie
 lxml
 oauth2client
 pendulum
