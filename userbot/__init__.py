@@ -224,6 +224,9 @@ IMG_LIMIT = os.environ.get("IMG_LIMIT", None)
 # JustWatch Country
 WATCH_COUNTRY = os.environ.get("WATCH_COUNTRY", None)
 
+# Custom Alive Header
+HEADER = os.environ.get("HEADER", "Userbot is alive with status:")
+
 # Deezloader
 DEEZER_ARL_TOKEN = os.environ.get("DEEZER_ARL_TOKEN", None)
 

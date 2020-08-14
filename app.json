@@ -157,6 +157,11 @@
       "value": "",
       "required": false
     },
+    "HEADER": {
+      "description": "Custom text alive header",
+      "value": "Userbot is alive with status",
+      "required": false
+    },
     "IMG_LIMIT": {
       "description": "Set limit for .img module",
       "value": "3",

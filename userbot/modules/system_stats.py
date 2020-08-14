@@ -17,7 +17,7 @@ from shutil import which
 import psutil
 from telethon import __version__, version
 
-from userbot import ALIVE_NAME, CMD_HELP, DB_URI, IMG, StartTime, bot
+from userbot import ALIVE_NAME, CMD_HELP, DB_URI, HEADER, IMG, StartTime, bot
 from userbot.events import register
 
 # ================= CONSTANT =================
@@ -228,7 +228,7 @@ async def amireallyalive(alive):
     db = check_data_base_heal_th()
     caption = (
         "`"
-        "\nUserbot is alive with status:\n\n"
+        f"{HEADER}\n\n"
         f"👤 User             : {DEFAULTUSER}\n\n"
         f"🐍 Python           : {python_version()}\n\n"
         f"💻 Telethon version : {version.__version__}\n\n"
