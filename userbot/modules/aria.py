@@ -38,7 +38,7 @@ trackers = f"[{trackers_list}]"
 cmd = f"aria2c \
 --enable-rpc \
 --rpc-listen-all=false \
---rpc-listen-port 8210 \
+--rpc-listen-port 6800 \
 --max-connection-per-server=10 \
 --rpc-max-request-size=1024M \
 --seed-time=0.01 \
@@ -59,7 +59,7 @@ download_path = os.getcwd() + TEMP_DOWNLOAD_DIRECTORY.strip(".")
 aria2 = aria2p.API(
     aria2p.Client(
         host="http://localhost",
-        port=8210,
+        port=6800,
         secret=""))
 
 aria2.set_global_options({"dir": download_path})
