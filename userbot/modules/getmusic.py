@@ -1,74 +1,79 @@
 import asyncio
 import glob
 import os
-import subprocess
 import time
 from asyncio.exceptions import TimeoutError
 
-import requests
-from bs4 import BeautifulSoup
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from pylast import User
+from selenium import webdriver
 from telethon import events
 from telethon.errors.rpcerrorlist import YouBlockedUserError
-from telethon.tl.types import DocumentAttributeVideo
 
-from userbot import CMD_HELP, LASTFM_USERNAME, bot, lastfm
+from userbot import CMD_HELP, GOOGLE_CHROME_BIN, LASTFM_USERNAME, bot, lastfm
 from userbot.events import register
 from userbot.utils import progress
 
 
-# For song module
-def getmusic(get, DEFAULT_AUDIO_QUALITY):
-    search = get
-
-    headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
-    }
-
-    html = requests.get(
-        "https://www.youtube.com/results?search_query=" +
-        search,
-        headers=headers).text
-    soup = BeautifulSoup(html, "html.parser")
-    for link in soup.find_all("a"):
-        if "/watch?v=" in link.get("href"):
-            # May change when Youtube Website may get updated in the future.
-            video_link = link.get("href")
-            break
-
-    video_link = "http://www.youtube.com/" + video_link
+# For song and vsong
+async def catmusic(cat, QUALITY):
+    search = cat
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--ignore-certificate-errors")
+    chrome_options.add_argument("--test-type")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.binary_location = GOOGLE_CHROME_BIN
+    driver = webdriver.Chrome(chrome_options=chrome_options)
+    driver.get("https://www.youtube.com/results?search_query=" + search)
+    user_data = driver.find_elements_by_xpath('//*[@id="video-title"]')
+    for i in user_data:
+        video_link = i.get_attribute("href")
+        break
+    if not os.path.isdir("./temp/"):
+        os.makedirs("./temp/")
     command = (
-        "youtube-dl --write-thumbnail --extract-audio --audio-format mp3 --audio-quality " +
-        DEFAULT_AUDIO_QUALITY +
+        'youtube-dl -o "./temp/%(title)s.%(ext)s" --extract-audio --audio-format mp3 --audio-quality ' +
+        QUALITY +
         " " +
         video_link)
     os.system(command)
+    thumb = (
+        'youtube-dl -o "./temp/%(title)s.%(ext)s" --write-thumbnail --skip-download ' +
+        video_link)
+    os.system(thumb)
 
 
-# For getvideosong
-def getmusicvideo(cat):
+async def catmusicvideo(cat):
     search = cat
-    headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
-    }
-    html = requests.get(
-        "https://www.youtube.com/results?search_query=" +
-        search,
-        headers=headers).text
-    soup = BeautifulSoup(html, "html.parser")
-    for link in soup.find_all("a"):
-        if "/watch?v=" in link.get("href"):
-            # May change when Youtube Website may get updated in the future.
-            video_link = link.get("href")
-            break
-    video_link = "http://www.youtube.com/" + video_link
-    command = 'youtube-dl -f "[filesize<50M]" --merge-output-format mp4 ' + video_link
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--ignore-certificate-errors")
+    chrome_options.add_argument("--test-type")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.binary_location = GOOGLE_CHROME_BIN
+    driver = webdriver.Chrome(chrome_options=chrome_options)
+    driver.get("https://www.youtube.com/results?search_query=" + search)
+    user_data = driver.find_elements_by_xpath('//*[@id="video-title"]')
+    for i in user_data:
+        video_link = i.get_attribute("href")
+        break
+    if not os.path.isdir("./temp/"):
+        os.makedirs("./temp/")
+    command = (
+        'youtube-dl -o "./temp/%(title)s.%(ext)s" -f "[filesize<50M]" ' +
+        video_link)
     os.system(command)
+    thumb = (
+        'youtube-dl -o "./temp/%(title)s.%(ext)s" --write-thumbnail --skip-download ' +
+        video_link)
+    os.system(thumb)
 
 
-@register(outgoing=True, pattern=r"^\.song (.*)")
+@register(outgoing=True, pattern=r"^\.song(?: |$)(.*)")
 async def _(event):
     reply_to_id = event.message.id
     if event.reply_to_msg_id:
@@ -76,42 +81,45 @@ async def _(event):
     reply = await event.get_reply_message()
     if event.pattern_match.group(1):
         query = event.pattern_match.group(1)
-        await event.edit("`Wait..! I am finding your song..`")
+        await event.edit("`Wait..! I am finding your song....`")
     elif reply.message:
         query = reply.message
-        await event.edit("`Wait..! I am finding your song..`")
+        await event.edit("`Wait..! I am finding your song....`")
     else:
         await event.edit("`What I am Supposed to find?`")
         return
-
-    getmusic(str(query), "320k")
-    l = glob.glob("*.mp3")
+    await catmusic(str(query), "320k")
+    l = glob.glob("./temp/*.mp3")
+    if l:
+        await event.edit("`Yeah..! I found something..🥰`")
+    else:
+        await event.edit(f"Sorry..! I can't find anything with `{query}`")
+        return
+    thumbcat = glob.glob("./temp/*.jpg") + glob.glob("./temp/*.webp")
+    if thumbcat:
+        catthumb = thumbcat[0]
+    else:
+        catthumb = None
     loa = l[0]
-    img_extensions = ["webp", "jpg", "jpeg", "webp"]
-    img_filenames = [
-        fn_img
-        for fn_img in os.listdir()
-        if any(fn_img.endswith(ext_img) for ext_img in img_extensions)
-    ]
-    thumb_image = img_filenames[0]
     await event.edit("`Yeah.. Uploading your song..`")
     c_time = time.time()
-    await event.client.send_file(
+    await bot.send_file(
         event.chat_id,
         loa,
-        supports_streaming=True,
-        thumb=thumb_image,
+        force_document=False,
         allow_cache=False,
         caption=query,
+        thumb=catthumb,
+        supports_streaming=True,
         reply_to=reply_to_id,
         progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
             progress(d, t, event, c_time, "[UPLOAD]", loa)
         ),
     )
     await event.delete()
-    os.system("rm -rf *.mp3")
-    os.remove(thumb_image)
-    subprocess.check_output("rm -rf *.mp3", shell=True)
+    os.system("rm -rf ./temp/*.mp3")
+    os.system("rm -rf ./temp/*.jpg")
+    os.system("rm -rf ./temp/*.webp")
 
 
 @register(outgoing=True, pattern=r"^\.vsong(?: |$)(.*)")
@@ -122,62 +130,52 @@ async def _(event):
     reply = await event.get_reply_message()
     if event.pattern_match.group(1):
         query = event.pattern_match.group(1)
-        await event.edit("`Wait..! I am finding your videosong..`")
+        await event.edit("`Wait..! I am finding your videosong....`")
     elif reply.message:
         query = reply.message
-        await event.edit("`Wait..! I am finding your videosong..`")
+        await event.edit("`Wait..! I am finding your videosong....`")
     else:
         await event.edit("`What I am Supposed to find?`")
         return
-    getmusicvideo(query)
-    l = glob.glob(("*.mp4")) + glob.glob(("*.mkv")) + glob.glob(("*.webm"))
+    await catmusicvideo(query)
+    l = glob.glob(("./temp/*.mp4"))
     if l:
-        await event.edit("`Yeah..! i found something..`")
+        await event.edit("`Yeah..! I found something..🥰`")
     else:
-        await event.edit(f"Sorry..! i can't find anything with `{query}`")
+        await event.edit(f"Sorry..! I can't find anything with `{query}`")
+        return
+    thumbcat = glob.glob("./temp/*.jpg") + glob.glob("./temp/*.webp")
+    if thumbcat:
+        catthumb = thumbcat[0]
+    else:
+        catthumb = None
     loa = l[0]
     metadata = extractMetadata(createParser(loa))
-    duration = 0
-    width = 0
-    height = 0
     if metadata.has("duration"):
-        duration = metadata.get("duration").seconds
+        metadata.get("duration").seconds
     if metadata.has("width"):
-        width = metadata.get("width")
+        metadata.get("width")
     if metadata.has("height"):
-        height = metadata.get("height")
+        metadata.get("height")
     await event.edit("`Uploading video.. Please wait..`")
-    os.system("cp *mp4 thumb.mp4")
-    os.system("ffmpeg -i thumb.mp4 -vframes 1 -an -s 480x360 -ss 5 thumb.jpg")
-    thumb_image = "thumb.jpg"
     c_time = time.time()
-    await event.client.send_file(
+    await bot.send_file(
         event.chat_id,
         loa,
         force_document=False,
-        thumb=thumb_image,
         allow_cache=False,
+        thumb=catthumb,
         caption=query,
         supports_streaming=True,
         reply_to=reply_to_id,
-        attributes=[
-            DocumentAttributeVideo(
-                duration=duration,
-                w=width,
-                h=height,
-                round_message=False,
-                supports_streaming=True,
-            )
-        ],
         progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
             progress(d, t, event, c_time, "[UPLOAD]", loa)
         ),
     )
     await event.delete()
-    os.remove(thumb_image)
-    os.system("rm -rf *.mkv")
-    os.system("rm -rf *.mp4")
-    os.system("rm -rf *.webm")
+    os.system("rm -rf ./temp/*.mp4")
+    os.system("rm -rf ./temp/*.jpg")
+    os.system("rm -rf ./temp/*.webp")
 
 
 @register(outgoing=True, pattern=r"^\.smd (?:(now)|(.*) - (.*))")
