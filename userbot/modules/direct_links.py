@@ -4,39 +4,38 @@
 # you may not use this file except in compliance with the License.
 #
 """ Userbot module containing various sites direct links generators"""
+import asyncio
 import json
 import re
 import urllib.parse
+from asyncio import create_subprocess_shell as asyncSubprocess
+from asyncio.subprocess import PIPE as asyncPIPE
 from random import choice
-from subprocess import PIPE, Popen
 
+import aiohttp
 import requests
 from bs4 import BeautifulSoup
 from humanize import naturalsize
 
-from userbot import CMD_HELP
+from userbot import CMD_HELP, USR_TOKEN
 from userbot.events import register
+from userbot.utils import time_formatter
 
 
-def subprocess_run(cmd):
-    subproc = Popen(
-        cmd,
-        stdout=PIPE,
-        stderr=PIPE,
-        shell=True,
-        universal_newlines=True)
-    talk = subproc.communicate()
+async def subprocess_run(cmd):
+    reply = ""
+    subproc = await asyncSubprocess(cmd, stdout=asyncPIPE, stderr=asyncPIPE)
+    result = await subproc.communicate()
     exitCode = subproc.returncode
     if exitCode != 0:
-        reply = ""
         reply += (
-            "```An error was detected while running the subprocess:\n"
-            f"exit code: {exitCode}\n"
-            f"stdout: {talk[0]}\n"
-            f"stderr: {talk[1]}```"
+            "**An error was detected while running subprocess.**\n"
+            f"exitCode : `{exitCode}`\n"
+            f"stdout : `{result[0].decode().strip()}`\n"
+            f"stderr : `{result[1].decode().strip()}`"
         )
         return reply
-    return talk
+    return result
 
 
 @register(outgoing=True, pattern=r"^\.direct(?: |$)([\s\S]*)")
@@ -76,13 +75,16 @@ async def direct_link_generator(request):
             reply += github(link)
         elif "androidfilehost.com" in link:
             reply += androidfilehost(link)
+        elif 'uptobox.com' in link:
+            await uptobox(request, link)
+            return None
         else:
             reply += re.findall(r"\bhttps?://(.*?[^/]+)",
                                 link)[0] + "is not supported"
     await request.edit(reply)
 
 
-def gdrive(url: str) -> str:
+async def gdrive(url: str) -> str:
     """ GDrive direct links generator """
     drive = "https://drive.google.com"
     try:
@@ -124,7 +126,7 @@ def gdrive(url: str) -> str:
     return reply
 
 
-def zippy_share(url: str) -> str:
+async def zippy_share(url: str) -> str:
     """ ZippyShare direct links generator
     Based on https://github.com/LameLemon/ziggy"""
     reply = ""
@@ -155,7 +157,7 @@ def zippy_share(url: str) -> str:
     return reply
 
 
-def yandex_disk(url: str) -> str:
+async def yandex_disk(url: str) -> str:
     """ Yandex.Disk direct links generator
     Based on https://github.com/wldhx/yadisk-direct"""
     reply = ""
@@ -175,7 +177,7 @@ def yandex_disk(url: str) -> str:
     return reply
 
 
-def cm_ru(url: str) -> str:
+async def cm_ru(url: str) -> str:
     """ cloud.mail.ru direct links generator
     Using https://github.com/JrMasterModelBuilder/cmrudl.py"""
     reply = ""
@@ -201,7 +203,7 @@ def cm_ru(url: str) -> str:
     return reply
 
 
-def mediafire(url: str) -> str:
+async def mediafire(url: str) -> str:
     """ MediaFire direct links generator """
     try:
         link = re.findall(r"\bhttps?://.*mediafire\.com\S+", url)[0]
@@ -218,7 +220,7 @@ def mediafire(url: str) -> str:
     return reply
 
 
-def sourceforge(url: str) -> str:
+async def sourceforge(url: str) -> str:
     """ SourceForge direct links generator """
     try:
         link = re.findall(r"\bhttps?://.*sourceforge\.net\S+", url)[0]
@@ -243,7 +245,7 @@ def sourceforge(url: str) -> str:
     return reply
 
 
-def osdn(url: str) -> str:
+async def osdn(url: str) -> str:
     """ OSDN direct links generator """
     osdn_link = "https://osdn.net"
     try:
@@ -268,7 +270,7 @@ def osdn(url: str) -> str:
     return reply
 
 
-def github(url: str) -> str:
+async def github(url: str) -> str:
     """ GitHub direct links generator """
     try:
         link = re.findall(r"\bhttps?://.*github\.com.*releases\S+", url)[0]
@@ -287,7 +289,7 @@ def github(url: str) -> str:
     return reply
 
 
-def androidfilehost(url: str) -> str:
+async def androidfilehost(url: str) -> str:
     """ AFH direct links generator """
     try:
         link = re.findall(r"\bhttps?://.*androidfilehost.*fid.*\S+", url)[0]
@@ -296,7 +298,7 @@ def androidfilehost(url: str) -> str:
         return reply
     fid = re.findall(r"\?fid=(.*)", link)[0]
     session = requests.Session()
-    user_agent = useragent()
+    user_agent = await useragent()
     headers = {"user-agent": user_agent}
     res = session.get(link, headers=headers, allow_redirects=True)
     headers = {
@@ -338,7 +340,83 @@ def androidfilehost(url: str) -> str:
     return reply
 
 
-def useragent():
+async def uptobox(request, url: str) -> str:
+    """ Uptobox direct links generator """
+    try:
+        link = re.findall(r"\bhttps?://.*uptobox\.com\S+", url)[0]
+    except IndexError:
+        await request.edit("`No uptobox links found.`")
+        return
+    if USR_TOKEN is None:
+        await request.edit("`Set USR_TOKEN_UPTOBOX first!`")
+        return
+    if link.endswith("/"):
+        index = -2
+    else:
+        index = -1
+    FILE_CODE = link.split("/")[index]
+    origin = "https://uptobox.com/api/link"
+    """ Retrieve file informations """
+    uri = f"{origin}/info?fileCodes={FILE_CODE}"
+    await request.edit("`Retrieving file informations...`")
+    async with aiohttp.ClientSession() as session:
+        async with session.get(uri) as response:
+            result = json.loads(await response.text())
+            data = result.get("data").get("list")[0]
+            if "error" in data:
+                await request.edit(
+                    "`[ERROR]`\n"
+                    f"`statusCode`: **{data.get('error').get('code')}**\n"
+                    f"`reason`: **{data.get('error').get('message')}**"
+                )
+                return
+            file_name = data.get("file_name")
+            file_size = naturalsize(data.get("file_size"))
+    """ Get waiting token and direct download link """
+    uri = f"{origin}?token={USR_TOKEN}&file_code={FILE_CODE}"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(uri) as response:
+            result = json.loads(await response.text())
+            status = result.get("message")
+            if status == "Waiting needed":
+                wait = result.get("data").get("waiting")
+                waitingToken = result.get("data").get("waitingToken")
+                await request.edit(f"`Waiting for about {time_formatter(wait)}.`")
+                # for some reason it doesn't go as i planned
+                # so make it 1 minute just to be save enough
+                await asyncio.sleep(wait + 60)
+                uri += f"&waitingToken={waitingToken}"
+                async with session.get(uri) as response:
+                    await request.edit("`Generating direct download link...`")
+                    result = json.loads(await response.text())
+                    status = result.get("message")
+                    if status == "Success":
+                        webLink = result.get("data").get("dlLink")
+                        await request.edit(f"[{file_name} ({file_size})]({webLink})")
+                        return
+                    else:
+                        await request.edit(
+                            "`[ERROR]`\n"
+                            f"`statusCode`: **{result.get('statusCode')}**\n"
+                            f"`reason`: **{result.get('data')}**\n"
+                            f"`status`: **{status}**"
+                        )
+                        return
+            elif status == "Success":
+                webLink = result.get("data").get("dlLink")
+                await request.edit(f"[{file_name} ({file_size})]({webLink})")
+                return
+            else:
+                await request.edit(
+                    "`[ERROR]`\n"
+                    f"`statusCode`: **{result.get('statusCode')}**\n"
+                    f"`reason`: **{result.get('data')}**\n"
+                    f"`status`: **{status}**"
+                )
+                return
+
+
+async def useragent():
     """
     useragent random setter
     """
@@ -360,6 +438,6 @@ CMD_HELP.update(
         "generate a direct download link\n\n"
         "List of supported URLs:\n"
         "`Google Drive - Cloud Mail - Yandex.Disk - AFH - "
-        "ZippyShare - MediaFire - SourceForge - OSDN - GitHub`"
+        "ZippyShare - MediaFire - SourceForge - OSDN - GitHub - Uptobox`"
     }
 )
