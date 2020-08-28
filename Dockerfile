@@ -1,6 +1,4 @@
-# Cz we are Arch User
-FROM gengkapak/archlinux:latest
-USER gengkapak
+FROM gengkapak/groovygorilla:latest
 
 #
 # Clone repo and prepare working directory
