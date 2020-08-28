@@ -14,7 +14,7 @@ from userbot import CMD_HELP, bot
 from userbot.events import register
 
 
-@register(outgoing=True, pattern=r"^\.q")
+@register(outgoing=True, pattern=r"^\.qt")
 async def _(event):
     if event.fwd_from:
         return
@@ -51,5 +51,5 @@ async def _(event):
 
 
 CMD_HELP.update(
-    {"quotly": ">`.q` Reply to chat." "\nUsage: Enhance ur text to sticker.\n"}
+    {"quotly": ">`.qt` Reply to chat." "\nUsage: Enhance ur text to sticker.\n"}
 )
