@@ -70,6 +70,7 @@ telethon-session-sqlalchemy
 twitter_scraper
 urbandict
 validators
+wand
 wget
 wikipedia
 youtube-dl
