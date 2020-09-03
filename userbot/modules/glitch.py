@@ -6,6 +6,7 @@ from typing import Optional, Tuple
 
 from glitch_this import ImageGlitcher
 from PIL import Image
+from telethon import functions, types
 
 from userbot import CMD_HELP, LOGS, bot
 from userbot.events import register
@@ -88,8 +89,18 @@ async def glitch(cat):
             duration=DURATION,
             loop=LOOP,
         )
-        await bot.send_file(cat.chat_id, Glitched, reply_to_message_id=catid)
+        nosave = await bot.send_file(cat.chat_id, Glitched, reply_to_message_id=catid)
         os.remove(Glitched)
+        await bot(
+            functions.messages.SaveGifRequest(
+                id=types.InputDocument(
+                    id=nosave.media.document.id,
+                    access_hash=nosave.media.document.access_hash,
+                    file_reference=nosave.media.document.file_reference,
+                ),
+                unsave=True,
+            )
+        )
         await cat.delete()
     for files in (catsticker, glitch_file):
         if files and os.path.exists(files):
