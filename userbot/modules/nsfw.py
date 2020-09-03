@@ -12,6 +12,7 @@ import aiohttp
 import nekos
 import requests
 from jikanpy import Jikan
+from telethon import functions, types
 
 from userbot import CMD_HELP, bot
 from userbot.events import register
@@ -65,7 +66,9 @@ async def pat(e):
     pat = random.choice(pats)
     link = f"https://headp.at/pats/{urlencode(pat)}"
 
-    await asyncio.wait([e.respond(file=link, reply_to=e.reply_to_msg_id), e.delete()])
+    await asyncio.wait(
+        [e.respond(file=link, reply_to=e.reply_to_msg_id), e.delete()]
+    )
 
 
 @register(outgoing=True, pattern=r"^\.pgif(?: |$)(.*)")
@@ -73,8 +76,20 @@ async def pussyg(e):
     await e.edit("`Finding some pussy gifs...`")
     await sleep(2)
     target = "pussy"
-    await bot.send_file(e.chat_id, nekos.img(target), reply_to=e.reply_to_msg_id)
+    nosave = await bot.send_file(
+        e.chat_id, nekos.img(target), reply_to=e.reply_to_msg_id
+    )
     await e.delete()
+    await bot(
+        functions.messages.SaveGifRequest(
+            id=types.InputDocument(
+                id=nosave.media.document.id,
+                access_hash=nosave.media.document.access_hash,
+                file_reference=nosave.media.document.file_reference,
+            ),
+            unsave=True,
+        )
+    )
 
 
 @register(outgoing=True, pattern=r"^\.pjpg(?: |$)(.*)")
@@ -91,22 +106,34 @@ async def cum(e):
     await e.edit("`Finding some cum gifs...`")
     await sleep(2)
     target = "cum"
-    await bot.send_file(e.chat_id, nekos.img(target), reply_to=e.reply_to_msg_id)
+    nosave = await bot.send_file(
+        e.chat_id, nekos.img(target), reply_to=e.reply_to_msg_id
+    )
     await e.delete()
+    await bot(
+        functions.messages.SaveGifRequest(
+            id=types.InputDocument(
+                id=nosave.media.document.id,
+                access_hash=nosave.media.document.access_hash,
+                file_reference=nosave.media.document.file_reference,
+            ),
+            unsave=True,
+        )
+    )
 
 
 CMD_HELP.update(
     {
         "nsfw": ">`.boobs`"
-        "\nUsage: Get boobs image.\n"
+        "\nUsage: Get boobs image.\n\n"
         ">`.butts`"
-        "\nUsage: Get butts image.\n"
+        "\nUsage: Get butts image.\n\n"
         ">`.pgif`"
-        "\nUsage: Get pussy gif.\n"
+        "\nUsage: Get pussy gif.\n\n"
         ">`.pjpg`"
-        "\nUsage: Get pussy image.\n"
+        "\nUsage: Get pussy image.\n\n"
         ">`.pat`"
-        "\nUsage: Get random pat gif.\n"
+        "\nUsage: Get random pat gif.\n\n"
         ">`.cum`"
         "\nUsage: Get random cum gif."
     }
