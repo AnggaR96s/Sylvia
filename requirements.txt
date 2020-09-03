@@ -37,6 +37,7 @@ jikanpy
 justwatch
 lottie
 lxml
+nekos.py
 oauth2client
 pendulum
 Pillow
