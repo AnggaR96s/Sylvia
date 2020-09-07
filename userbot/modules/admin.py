@@ -421,7 +421,7 @@ async def unmoot(unmot):
         try:
             await unmot.client(EditBannedRequest(unmot.chat_id, user.id, UNBAN_RIGHTS))
             await unmot.edit("```Unmuted Successfully```")
-        except UserIdInvalidError:
+        except Exception:
             return await unmot.edit("`Uh oh my unmute logic broke!`")
 
         if BOTLOG:
