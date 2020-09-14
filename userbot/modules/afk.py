@@ -19,7 +19,7 @@ from userbot import (
     ISAFK,
     PM_AUTO_BAN,
     USERS,
-) # pylint: disable=unused-imports
+)  # pylint: disable=unused-imports
 from userbot.events import register
 
 # ========================= CONSTANTS ============================

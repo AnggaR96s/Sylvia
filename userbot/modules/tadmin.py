@@ -6,18 +6,12 @@ import time
 
 from telethon.errors import (
     BadRequestError,
-    ChatAdminRequiredError,
-    UserAdminInvalidError,
 )
 from telethon.errors.rpcerrorlist import UserIdInvalidError
 from telethon.tl.functions.channels import (
-    EditAdminRequest,
     EditBannedRequest,
-    EditPhotoRequest,
 )
 from telethon.tl.types import (
-    ChannelParticipantsAdmins,
-    ChatAdminRights,
     ChatBannedRights,
     MessageEntityMentionName,
 )

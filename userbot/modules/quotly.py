@@ -50,6 +50,5 @@ async def _(event):
         return await event.edit("`Error: `@QuotLyBot` is not responding.`")
 
 
-CMD_HELP.update(
-    {"quotly": ">`.qt` Reply to chat." "\nUsage: Enhance ur text to sticker.\n"}
-)
+CMD_HELP.update({"quotly": ">`.qt` Reply to chat."
+                 "\nUsage: Enhance ur text to sticker.\n"})
