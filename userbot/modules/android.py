@@ -12,9 +12,10 @@ import re
 import time
 
 from bs4 import BeautifulSoup
+from html_telegraph_poster import TelegraphPoster
 from requests import get
 
-from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
+from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY, bot
 from userbot.events import register
 from userbot.utils import chrome, human_to_bytes, humanbytes, md5, time_formatter
 
@@ -307,6 +308,48 @@ async def twrp(request):
     await request.edit(reply)
 
 
+@register(outgoing=True, pattern=r"^\.ofox ?(.*)")
+async def ofox(event):
+    if not event.pattern_match.group(1):
+        await event.edit("`Provide a device codename to search recovery`")
+        await asyncio.sleep(3)
+        await event.delete()
+        return
+    t = TelegraphPoster(use_api=True)
+    t.create_api_token("GengKapak")
+    await event.edit("🔍 `Searching for recovery...`")
+    await asyncio.sleep(2)
+    photo = "https://i.imgur.com/582uaSk.png"
+    API_HOST = "https://api.orangefox.download/v2/device/"
+    codename = event.pattern_match.group(1)
+    try:
+        cn = get(f"{API_HOST}{codename}")
+        r = cn.json()
+    except ValueError:
+        await event.edit(f"`Recovery not found for {codename}!`")
+        await asyncio.sleep(3)
+        await event.delete()
+        return
+    s = get(f"{API_HOST}{codename}/releases/stable/last").json()
+    info = f"📱 <b>Device:</b> {r['fullname']}\n"
+    info += f"👤 <b>Maintainer:</b> {r['maintainer']['name']}\n\n"
+    recovery = f"🦊 <code>{s['file_name']}</code>\n"
+    recovery += f"📅 {s['date']}\n"
+    recovery += f"ℹ️ <b>Version:</b> {s['version']}\n"
+    recovery += f"📌 <b>Build Type:</b> {s['build_type']}\n"
+    recovery += f"🔰 <b>Size:</b> {s['size_human']}\n\n"
+    recovery += "📍 <b>Changelog:</b>\n"
+    recovery += f"<code>{s['changelog']}</code>\n\n"
+    msg = info
+    msg += recovery
+    notes_ = s.get("notes")
+    if notes_:
+        notes = t.post(title="READ Notes", author="", text=notes_)
+        msg += f"🗒️ <a href={notes['url']}>NOTES</a>\n"
+    msg += f"⬇️ <a href={s['url']}>DOWNLOAD</a>"
+    await bot.send_file(event.chat_id, file=photo, caption=msg, parse_mode="html")
+
+
 CMD_HELP.update(
     {
         "android": ">`.magisk`"
@@ -321,5 +364,7 @@ CMD_HELP.update(
         "\nUsage: Get device specifications info."
         "\n\n>`.twrp <codename>`"
         "\nUsage: Get latest twrp download for android device."
+        "\n\n>`.ofox <codename>`"
+        "\nUsage: Get latest OrangeFox Recovery for android device."
     }
 )
