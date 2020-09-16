@@ -26,14 +26,15 @@ async def cat_meme(topString, bottomString, filename, endname):
     img = Image.open(filename)
     imageSize = img.size
     # find biggest font size that works
-    fontSize = int(imageSize[1] / 5)
-    font = ImageFont.truetype("userbot/utils/impact.ttf", fontSize)
+    fontSize = int(imageSize[1] / 9)
+    font = ImageFont.truetype("userbot/utils/MutantAcademyStyle.ttf", fontSize)
     topTextSize = font.getsize(topString)
     bottomTextSize = font.getsize(bottomString)
     while topTextSize[0] > imageSize[0] - \
             20 or bottomTextSize[0] > imageSize[0] - 20:
         fontSize = fontSize - 1
-        font = ImageFont.truetype("userbot/utils/impact.ttf", fontSize)
+        font = ImageFont.truetype(
+            "userbot/utils/MutantAcademyStyle.ttf", fontSize)
         topTextSize = font.getsize(topString)
         bottomTextSize = font.getsize(bottomString)
 
@@ -85,7 +86,7 @@ async def cat_meeme(upper_text, lower_text, picture_name, endname):
                 main_image.width))).upper()
     lower_margin = MARGINS[lower_text.count("\n")]
     text_draw = Drawing()
-    text_draw.font = join(getcwd(), "userbot/utils/impact.ttf")
+    text_draw.font = join(getcwd(), "userbot/utils/MutantAcademyStyle.ttf")
     text_draw.font_size = 100
     text_draw.text_alignment = "center"
     text_draw.stroke_color = Color("black")
