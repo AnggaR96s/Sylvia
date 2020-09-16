@@ -11,18 +11,27 @@ from userbot.events import register
 
 @register(outgoing=True, pattern=r"^\.help(?: |$)(.*)")
 async def help(event):
-    """ For .help command,"""
+    """ For .help command """
     args = event.pattern_match.group(1).lower()
+    # Prevent Channel Bug to get any information and command from all modules
+    if event.is_channel and not event.is_group:
+        await event.edit("`Help command isn't permitted on channels`")
+        return
     if args:
         if args in CMD_HELP:
             await event.edit(str(CMD_HELP[args]))
         else:
             await event.edit("Please specify a valid module name.")
     else:
-        string = "**List of all loaded module(s)**\n\
-                 \nSpecify which module do you want help for !! \
-                 \n**Usage:** `.help` <module name>\n\n•    "
+        temp = ""
+        final = "**List of all loaded module(s)**\n\
+                 \nSpecify which module do you want help for! \
+                 \n**Usage:** `.help` <module name>\n\n"
+
         for i in CMD_HELP:
-            string += "`" + str(i)
-            string += "`\t\t\t•\t\t\t "
-        await event.edit(f"{string}")
+            temp += str(i) + " "
+        temp = sorted(temp.split())
+        for i in temp:
+            final += "`" + str(i)
+            final += "`\t\t\t•\t\t\t "
+        await event.edit(f"{final[:-5]}")
