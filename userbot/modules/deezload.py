@@ -27,7 +27,7 @@
 
 # requires: deezloader hachoir Pillow
 # Ported from UniBorg by AnggaR96s
-
+import asyncio
 import os
 import shutil
 import time
@@ -37,8 +37,13 @@ from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from telethon.tl.types import DocumentAttributeAudio
 
-from userbot import CMD_HELP, DEEZER_ARL_TOKEN, TEMP_DOWNLOAD_DIRECTORY
+from userbot import (
+    CMD_HELP,
+    DEEZER_ARL_TOKEN,
+    TEMP_DOWNLOAD_DIRECTORY,
+)
 from userbot.events import register
+from userbot.utils import progress
 
 
 @register(outgoing=True,
@@ -169,6 +174,7 @@ async def upload_track(track_location, message):
     supports_streaming = True
     force_document = False
     caption_rts = os.path.basename(track_location)
+    c_time = time.time()
     await message.client.send_file(
         message.chat_id,
         track_location,
@@ -177,6 +183,9 @@ async def upload_track(track_location, message):
         supports_streaming=supports_streaming,
         allow_cache=False,
         attributes=document_attributes,
+        progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
+            progress(d, t, message, c_time, "[UPLOAD]")
+        ),
     )
     os.remove(track_location)
 
