@@ -12,7 +12,7 @@ from userbot.utils.tools import check_media
 Converted = TEMP_DOWNLOAD_DIRECTORY + "sticker.webp"
 
 
-@register(outgoing=True, pattern=r"^\.ghost(?: |$)(.*)")
+@register(outgoing=True, pattern=r"^\.ghost$")
 async def ghost(ghost):
     if not ghost.reply_to_msg_id:
         await ghost.edit("`Reply to any media..`")
@@ -36,12 +36,17 @@ async def ghost(ghost):
         await ghost.edit("`Ghost is coming 😈 `")
         file_name = "ghost.png"
         downloaded_file_name = os.path.join(TEMP_DOWNLOAD_DIRECTORY, file_name)
-        ghost_file = await bot.download_media(reply_message, downloaded_file_name,)
+        ghost_file = await bot.download_media(
+            reply_message,
+            downloaded_file_name,
+        )
         im = Image.open(ghost_file).convert("RGB")
         im_invert = ImageOps.invert(im)
         im_invert.save(Converted)
         await ghost.client.send_file(
-            ghost.chat_id, Converted, reply_to=ghost.reply_to_msg_id,
+            ghost.chat_id,
+            Converted,
+            reply_to=ghost.reply_to_msg_id,
         )
         await ghost.delete()
         os.remove(ghost_file)
@@ -50,7 +55,7 @@ async def ghost(ghost):
         pass
 
 
-@register(outgoing=True, pattern=r"^\.media(?: |$)(.*)")
+@register(outgoing=True, pattern=r"^\.(mirror|flip)$")
 async def mirrorflip(event):
     if not event.reply_to_msg_id:
         await event.edit("`Reply to Any media..`")
@@ -76,7 +81,8 @@ async def mirrorflip(event):
         file_name = "gambar.png"
         downloaded_file_name = os.path.join(TEMP_DOWNLOAD_DIRECTORY, file_name)
         mirror_flip_file = await bot.download_media(
-            reply_message, downloaded_file_name,
+            reply_message,
+            downloaded_file_name,
         )
         im = Image.open(mirror_flip_file).convert("RGB")
         if cmd == "mirror":
@@ -122,7 +128,10 @@ async def rotate(event):
         value = 90
     file_name = "gambar.png"
     downloaded_file_name = os.path.join(TEMP_DOWNLOAD_DIRECTORY, file_name)
-    rotate = await bot.download_media(reply_message, downloaded_file_name,)
+    rotate = await bot.download_media(
+        reply_message,
+        downloaded_file_name,
+    )
     im = Image.open(rotate).convert("RGB")
     IMG = im.rotate(value, expand=1)
     IMG.save(Converted, quality=95)
@@ -138,8 +147,10 @@ CMD_HELP.update(
     {
         "transform": ">`.ghost`"
         "\nUsage: Enchance your image to become a ghost!."
-        "\n\n>`.media <flip|mirror>`"
-        "\nUsage: To mirror/flip your image"
+        "\n\n>`.flip`"
+        "\nUsage: To flip your image"
+        "\n\n>`.mirror`"
+        "\nUsage: To mirror your image"
         "\n\n>`.rotate <value>`"
         "\nUsage: To rotate your image\n* The value is range 1-360 if not it'll give default value which is 90"
     }
