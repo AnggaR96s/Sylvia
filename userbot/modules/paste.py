@@ -5,10 +5,12 @@
 #
 """ Userbot module containing commands for interacting with dogbin(https://del.dog)"""
 import os
+from datetime import datetime
 
+import requests
 from requests import exceptions, get, post
 
-from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
+from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY, bot
 from userbot.events import register
 
 DOGBIN_URL = "https://del.dog/"
@@ -127,11 +129,52 @@ async def get_dogbin_content(dog_url):
         )
 
 
+@register(outgoing=True, pattern=r"^\.neko ?(.*)")
+async def _(event):
+    if event.fwd_from:
+        return
+    datetime.now()
+    if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
+        os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
+    input_str = event.pattern_match.group(1)
+    message = "SYNTAX: `.neko <long text to include>`"
+    if input_str:
+        message = input_str
+    elif event.reply_to_msg_id:
+        previous_message = await event.get_reply_message()
+        if previous_message.media:
+            downloaded_file_name = await bot.download_media(
+                previous_message, TEMP_DOWNLOAD_DIRECTORY
+            )
+            m_list = None
+            with open(downloaded_file_name, "rb") as fd:
+                m_list = fd.readlines()
+            message = ""
+            for m in m_list:
+                # message += m.decode("UTF-8") + "\r\n"
+                message += m.decode("UTF-8")
+            os.remove(downloaded_file_name)
+        else:
+            message = previous_message.message
+    else:
+        message = "SYNTAX: `.neko <long text to include>`"
+    data = message
+    key = (requests.post("https://nekobin.com/api/documents",
+                         json={"content": data}) .json() .get("result") .get("key"))
+    url = f"https://nekobin.com/{key}"
+    raw = f"https://nekobin.com/raw/{key}"
+    reply_text = (
+        "`Pasted successfully!`\n\n"
+        f"[Nekobin URL]({url})\n"
+        f"[View RAW]({raw})")
+    await event.edit(reply_text)
+
+
 CMD_HELP.update(
     {
-        "dogbin": ">`.paste <text/reply>`"
-        "\nUsage: Create a paste or a shortened url using dogbin (https://del.dog/)"
+        "paste": ">`.paste <text/reply>`"
+        "\nUsage: Create a paste or a shortened url using [Dogbin](https://del.dog/)"
         "\n\n>`.getpaste`"
-        "\nUsage: Gets the content of a paste or shortened url from dogbin (https://del.dog/)"
-    }
-)
+        "\nUsage: Gets the content of a paste or shortened url from [Dogbin](https://del.dog/)"
+        "\n\n>`.neko`"
+        "\nUsage: Same as `.paste` but with [Nekobin](https://nekobin.com/)"})
