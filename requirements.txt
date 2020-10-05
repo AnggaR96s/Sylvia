@@ -10,6 +10,7 @@ bwb
 cairosvg
 cffi
 cfscrape
+colour
 covid
 cowpy
 cryptg
