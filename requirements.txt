@@ -63,6 +63,7 @@ pytz
 qrcode
 regex
 requests
+scipy
 selenium
 speedtest-cli
 sqlalchemy
@@ -75,5 +76,6 @@ validators
 vcsi
 wand
 wget
+wordcloud
 wikipedia
 youtube_search
