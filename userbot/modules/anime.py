@@ -696,10 +696,10 @@ async def whatanime(e):
             f"{html.escape(dt0.to_time_string())} - {html.escape(dt1.to_time_string())}"
         )
         url = (
-            "https://trace.moe/preview.php"
-            f'?anilist_id={urlencode(str(js0["anilist_id"]))}'
-            f'&file={urlencode(js0["filename"])}'
-            f'&t={urlencode(str(js0["at"]))}'
+            "https://media.trace.moe/video/"
+            f'{urlencode(str(js0["anilist_id"]))}' + "/"
+            f'{urlencode(js0["filename"])}'
+            f'?t={urlencode(str(js0["at"]))}'
             f'&token={urlencode(js0["tokenthumb"])}'
         )
         async with session.get(url) as raw_resp1:
@@ -727,8 +727,7 @@ def is_gif(file):
     # lazy to go to github and make an issue kek
     if not is_video(file):
         return False
-    return DocumentAttributeAnimated() in getattr(
-        file, "document", file).attributes
+    return DocumentAttributeAnimated() in getattr(file, "document", file).attributes
 
 
 CMD_HELP.update(
