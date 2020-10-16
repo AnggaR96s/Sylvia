@@ -81,17 +81,17 @@ async def _(event):
     reply = await event.get_reply_message()
     if event.pattern_match.group(1):
         query = event.pattern_match.group(1)
-        await event.edit("`Wait..! I am finding your song....`")
+        await event.edit("`Wait..! I am finding your song..`")
     elif reply.message:
         query = reply.message
-        await event.edit("`Wait..! I am finding your song....`")
+        await event.edit("`Wait..! I am finding your song..`")
     else:
         await event.edit("`What I am Supposed to find?`")
         return
     await catmusic(str(query), "320k")
     l = glob.glob("./temp/*.mp3")
     if l:
-        await event.edit("`Yeah..! I found something..🥰`")
+        await event.edit("`Yeah..! I found something..`")
     else:
         await event.edit(f"Sorry..! I can't find anything with `{query}`")
         return
@@ -130,17 +130,17 @@ async def _(event):
     reply = await event.get_reply_message()
     if event.pattern_match.group(1):
         query = event.pattern_match.group(1)
-        await event.edit("`Wait..! I am finding your videosong....`")
+        await event.edit("`Wait..! I am finding your videosong..`")
     elif reply.message:
         query = reply.message
-        await event.edit("`Wait..! I am finding your videosong....`")
+        await event.edit("`Wait..! I am finding your videosong..`")
     else:
         await event.edit("`What I am Supposed to find?`")
         return
     await catmusicvideo(query)
     l = glob.glob(("./temp/*.mp4"))
     if l:
-        await event.edit("`Yeah..! I found something..🥰`")
+        await event.edit("`Yeah..! I found something..`")
     else:
         await event.edit(f"Sorry..! I can't find anything with `{query}`")
         return
@@ -272,7 +272,7 @@ async def _(event):
         await event.edit("`Enter a valid link to download from`")
     else:
         await event.edit("`Processing...`")
-    chat = "@MusicHuntersBot"
+    chat = "@MusicsHunterbot"
     try:
         async with bot.conversation(chat) as conv:
             try:
@@ -283,7 +283,7 @@ async def _(event):
                 song = await conv.get_response()
                 await bot.send_read_acknowledge(conv.chat_id)
             except YouBlockedUserError:
-                await event.edit("`Unblock `@MusicHuntersBot` and retry`")
+                await event.edit("`Unblock `@MusicsHunterbot` and retry`")
                 return
             await bot.send_file(event.chat_id, song, caption=details.text)
             await event.client.delete_messages(
@@ -292,7 +292,7 @@ async def _(event):
             await event.delete()
     except TimeoutError:
         return await event.edit(
-            "`Error: `@MusicHuntersBot` is not responding or Song not found!.`"
+            "`Error: `@MusicsHunterbot` is not responding or Song not found!.`"
         )
 
 
@@ -311,4 +311,4 @@ CMD_HELP.update(
         ">`.net now`"
         "\nUsage: Download current LastFM scrobble use `@WooMaiBot`.\n\n"
         ">`.sdd <Spotify/Deezer Link>`"
-        "\nUsage: Download music from Spotify or Deezer use `@MusicHuntersBot`."})
+        "\nUsage: Download music from Spotify or Deezer use `@MusicsHunterbot`."})

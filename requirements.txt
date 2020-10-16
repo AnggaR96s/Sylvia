@@ -21,10 +21,8 @@ fonttools
 geopy
 git+https://github.com/AnggaR96s/youtube-dl.git
 git+https://github.com/bisoncorps/search-engine-parser.git
-git+https://github.com/johnwmillr/LyricsGenius.git
 gitpython
 glitch_this
-google_images_download
 google-api-python-client
 google-auth-oauthlib
 googletrans
@@ -40,6 +38,7 @@ jikanpy
 justwatch
 lottie
 lxml
+LyricsGenius
 nekos.py
 oauth2client
 pendulum
@@ -54,7 +53,6 @@ pyfiglet
 PyGithub
 pylast
 PyLyrics
-pymongo
 pySmartDL
 python-barcode
 python-dateutil
