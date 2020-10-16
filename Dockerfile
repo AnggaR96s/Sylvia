@@ -1,4 +1,4 @@
-FROM gengkapak/groovygorilla:latest
+FROM gengkapak/groovy:3.9.0
 
 #
 # Clone repo and prepare working directory
