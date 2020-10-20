@@ -72,7 +72,7 @@ else:
         level=INFO)
 LOGS = getLogger(__name__)
 
-if version_info < (3, 9, 0):
+if version_info < (3, 8, 0):
     LOGS.info(
         "You MUST have a python version of at least 3.8."
         "Multiple features depend on this. Bot quitting."
