@@ -71,7 +71,7 @@ async def on_view_blacklist(listbl):
         await listbl.edit(OUT_STR)
 
 
-@register(outgoing=True, pattern=r"^\.rmbl(?: |$)(.*)")
+@register(outgoing=True, pattern=r"^\.rembl(?: |$)(.*)")
 async def on_delete_blacklist(rmbl):
     text = rmbl.pattern_match.group(1)
     to_unblacklist = list(
@@ -93,5 +93,5 @@ CMD_HELP.update({"blacklist": ">`.listbl`"
                  "\n\n>`.addbl` <keyword>"
                  "\nUsage: Saves the message to the 'blacklist keyword'."
                  "\nThe bot will delete to the message whenever 'blacklist keyword' is mentioned."
-                 "\n\n>`.rmbl` <keyword>"
+                 "\n\n>`.rembl` <keyword>"
                  "\nUsage: Stops the specified blacklist."})
