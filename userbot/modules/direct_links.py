@@ -3,7 +3,7 @@
 # Licensed under the Raphielscape Public License, Version 1.c (the "License");
 # you may not use this file except in compliance with the License.
 #
-""" Userbot module containing various sites direct links generators"""
+
 import asyncio
 import json
 import re
@@ -40,7 +40,6 @@ async def subprocess_run(cmd):
 
 @register(outgoing=True, pattern=r"^\.direct(?: |$)([\s\S]*)")
 async def direct_link_generator(request):
-    """ direct links generator """
     await request.edit("`Processing...`")
     textx = await request.get_reply_message()
     message = request.pattern_match.group(1)
@@ -58,21 +57,21 @@ async def direct_link_generator(request):
         await request.edit(reply)
     for link in links:
         if "zippyshare.com" in link:
-            reply += zippy_share(link)
+            reply += await zippy_share(link)
         elif "yadi.sk" in link:
-            reply += yandex_disk(link)
+            reply += await yandex_disk(link)
         elif "cloud.mail.ru" in link:
-            reply += cm_ru(link)
+            reply += await cm_ru(link)
         elif "mediafire.com" in link:
-            reply += mediafire(link)
+            reply += await mediafire(link)
         elif "sourceforge.net" in link:
-            reply += sourceforge(link)
+            reply += await sourceforge(link)
         elif "osdn.net" in link:
-            reply += osdn(link)
+            reply += await osdn(link)
         elif "github.com" in link:
-            reply += github(link)
+            reply += await github(link)
         elif "androidfilehost.com" in link:
-            reply += androidfilehost(link)
+            reply += await androidfilehost(link)
         elif "uptobox.com" in link:
             await uptobox(request, link)
             return None
@@ -83,8 +82,6 @@ async def direct_link_generator(request):
 
 
 async def zippy_share(url: str) -> str:
-    """ ZippyShare direct links generator
-    Based on https://github.com/LameLemon/ziggy"""
     reply = ""
     dl_url = ""
     try:
@@ -114,8 +111,6 @@ async def zippy_share(url: str) -> str:
 
 
 async def yandex_disk(url: str) -> str:
-    """ Yandex.Disk direct links generator
-    Based on https://github.com/wldhx/yadisk-direct"""
     reply = ""
     try:
         link = re.findall(r"\bhttps?://.*yadi\.sk\S+", url)[0]
@@ -134,8 +129,6 @@ async def yandex_disk(url: str) -> str:
 
 
 async def cm_ru(url: str) -> str:
-    """ cloud.mail.ru direct links generator
-    Using https://github.com/JrMasterModelBuilder/cmrudl.py"""
     reply = ""
     try:
         link = re.findall(r"\bhttps?://.*cloud\.mail\.ru\S+", url)[0]
@@ -160,7 +153,6 @@ async def cm_ru(url: str) -> str:
 
 
 async def mediafire(url: str) -> str:
-    """ MediaFire direct links generator """
     try:
         link = re.findall(r"\bhttps?://.*mediafire\.com\S+", url)[0]
     except IndexError:
@@ -177,7 +169,6 @@ async def mediafire(url: str) -> str:
 
 
 async def sourceforge(url: str) -> str:
-    """ SourceForge direct links generator """
     try:
         link = re.findall(r"\bhttps?://.*sourceforge\.net\S+", url)[0]
     except IndexError:
@@ -202,7 +193,6 @@ async def sourceforge(url: str) -> str:
 
 
 async def osdn(url: str) -> str:
-    """ OSDN direct links generator """
     osdn_link = "https://osdn.net"
     try:
         link = re.findall(r"\bhttps?://.*osdn\.net\S+", url)[0]
@@ -227,7 +217,6 @@ async def osdn(url: str) -> str:
 
 
 async def github(url: str) -> str:
-    """ GitHub direct links generator """
     try:
         link = re.findall(r"\bhttps?://.*github\.com.*releases\S+", url)[0]
     except IndexError:
@@ -246,7 +235,6 @@ async def github(url: str) -> str:
 
 
 async def androidfilehost(url: str) -> str:
-    """ AFH direct links generator """
     try:
         link = re.findall(r"\bhttps?://.*androidfilehost.*fid.*\S+", url)[0]
     except IndexError:
@@ -297,7 +285,6 @@ async def androidfilehost(url: str) -> str:
 
 
 async def uptobox(request, url: str) -> str:
-    """ Uptobox direct links generator """
     try:
         link = re.findall(r"\bhttps?://.*uptobox\.com\S+", url)[0]
     except IndexError:
@@ -312,7 +299,6 @@ async def uptobox(request, url: str) -> str:
         index = -1
     FILE_CODE = link.split("/")[index]
     origin = "https://uptobox.com/api/link"
-    """ Retrieve file informations """
     uri = f"{origin}/info?fileCodes={FILE_CODE}"
     await request.edit("`Retrieving file informations...`")
     async with aiohttp.ClientSession() as session:
@@ -328,7 +314,6 @@ async def uptobox(request, url: str) -> str:
                 return
             file_name = data.get("file_name")
             file_size = naturalsize(data.get("file_size"))
-    """ Get waiting token and direct download link """
     uri = f"{origin}?token={USR_TOKEN}&file_code={FILE_CODE}"
     async with aiohttp.ClientSession() as session:
         async with session.get(uri) as response:
@@ -373,9 +358,6 @@ async def uptobox(request, url: str) -> str:
 
 
 async def useragent():
-    """
-    useragent random setter
-    """
     useragents = BeautifulSoup(
         requests.get(
             "https://developers.whatismybrowser.com/"
