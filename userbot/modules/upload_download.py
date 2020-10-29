@@ -143,7 +143,6 @@ async def uploadir(udir_event):
                         ),
                     )
                 else:
-                    thumb_image = os.path.join(input_str, "thumb.jpg")
                     c_time = time.time()
                     metadata = extractMetadata(createParser(single_file))
                     duration = 0
@@ -159,7 +158,6 @@ async def uploadir(udir_event):
                         udir_event.chat_id,
                         single_file,
                         caption=caption_rts,
-                        thumb=thumb_image,
                         force_document=False,
                         allow_cache=False,
                         reply_to=udir_event.message.id,
