@@ -31,7 +31,7 @@ def subprocess_run(cmd):
 
 # Get best trackers for improved download speeds, thanks K-E-N-W-A-Y.
 trackers_list = get(
-    "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
+    "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt"
 ).text.replace("\n\n", ",")
 trackers = f"[{trackers_list}]"
 
