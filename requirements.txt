@@ -19,8 +19,6 @@ dnspython
 emoji
 fonttools
 geopy
-git+https://github.com/AnggaR96s/youtube-dl.git
-git+https://github.com/bisoncorps/search-engine-parser.git
 gitpython
 glitch_this
 google-api-python-client
@@ -64,6 +62,7 @@ qrcode
 regex
 requests
 scipy
+search-engine-parser
 selenium
 speedtest-cli
 sqlalchemy
@@ -76,6 +75,7 @@ validators
 vcsi
 wand
 wget
-wordcloud
 wikipedia
+wordcloud
 youtube_search
+youtube-dl
