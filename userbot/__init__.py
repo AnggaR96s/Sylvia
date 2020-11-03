@@ -302,7 +302,7 @@ with bot:
 
         @tgbot.on(events.NewMessage(pattern="/start"))
         async def handler(event):
-            if event.message.from_id != uid:
+            if event.message.sender_id != uid:
                 await event.reply(
                     f"DCLXVI UserBot by `@NGGDCLXVI`! (`@{me.username}`) I am here to help you."
                 )
