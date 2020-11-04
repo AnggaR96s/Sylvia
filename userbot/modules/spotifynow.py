@@ -1,6 +1,7 @@
 import os
 from asyncio.exceptions import TimeoutError
 
+from PIL import Image
 from telethon.errors.rpcerrorlist import YouBlockedUserError
 
 from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY, bot
@@ -38,17 +39,20 @@ async def _(event):
                 downloaded_file_name = await event.client.download_media(
                     response.media, TEMP_DOWNLOAD_DIRECTORY
                 )
+                gambar = Image.open(f"{downloaded_file_name}").convert("RGB")
+                gambar.save("spotify.webp", "webp")
                 link = response.reply_markup.rows[0].buttons[0].url
                 await event.client.send_file(
                     event.chat_id,
-                    downloaded_file_name,
+                    file="spotify.webp",
                     force_document=False,
                     caption=f"[Play on Spotify]({link})",
                 )
                 """cleanup chat after completed"""
                 await event.client.delete_messages(conv.chat_id, [msg.id, response.id])
         await event.delete()
-        return os.remove(downloaded_file_name)
+        os.remove(downloaded_file_name)
+        return os.remove("spotify.webp")
     except TimeoutError:
         return await event.edit("`Error: `@SpotifyNowBot` is not responding!.`")
 
