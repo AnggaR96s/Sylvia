@@ -8,7 +8,7 @@ from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY, bot
 from userbot.events import register
 
 
-@register(outgoing=True, pattern=r"^\.spotnow$")
+@register(outgoing=True, disable_errors=True, pattern=r"^\.spotnow$")
 async def _(event):
     if event.fwd_from:
         return
@@ -39,8 +39,14 @@ async def _(event):
                 downloaded_file_name = await event.client.download_media(
                     response.media, TEMP_DOWNLOAD_DIRECTORY
                 )
-                gambar = Image.open(f"{downloaded_file_name}").convert("RGB")
-                gambar.save("spotify.webp", "webp")
+                try:
+                    gambar = Image.open(
+                        f"{downloaded_file_name}").convert("RGB")
+                    gambar.save("spotify.webp", "webp")
+                except FileNotFoundError:
+                    await event.edit(
+                        "`PM @SpotifyNowBot and auth your spotify account first`"
+                    )
                 link = response.reply_markup.rows[0].buttons[0].url
                 await event.client.send_file(
                     event.chat_id,
