@@ -46,11 +46,11 @@ async def _(event):
                     event.chat_id,
                     file="spotify.webp",
                     force_document=False,
-                    caption=f"[Play on Spotify]({link})",
+                    reply_to=event.message.id,
                 )
                 """cleanup chat after completed"""
                 await event.client.delete_messages(conv.chat_id, [msg.id, response.id])
-        await event.delete()
+        await event.edit(f"[Play on Spotify]({link})")
         os.remove(downloaded_file_name)
         return os.remove("spotify.webp")
     except TimeoutError:
