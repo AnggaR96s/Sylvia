@@ -1,4 +1,4 @@
-FROM gengkapak/groovygorilla:latest
+FROM gengkapak/hirsute:userbot
 
 #
 # Clone repo and prepare working directory
