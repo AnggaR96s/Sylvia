@@ -10,6 +10,8 @@ import random
 import urllib.request
 from os import remove
 
+import requests
+from bs4 import BeautifulSoup as bs
 from PIL import Image
 from telethon.tl.functions.messages import GetStickerSetRequest
 from telethon.tl.types import (
@@ -34,6 +36,8 @@ KANGING_STR = [
     "Imprisoning this sticker...",
     "Mr.Steal Your Sticker is stealing this sticker... ",
 ]
+
+COMBOT = "https://combot.org/telegram/stickers?q="
 
 
 @register(outgoing=True, pattern=r"^\.kang")
@@ -351,6 +355,29 @@ async def sticker_to_png(sticker):
     return
 
 
+@register(outgoing=True, pattern=r"^\.cbs ?(.*)")
+async def cb_sticker(event):
+    split = event.pattern_match.group(1)
+    if not split:
+        await event.edit("`Provide some name to search for pack.`")
+        return
+    await event.edit("`Searching sticker packs`")
+    text = requests.get(COMBOT + split).text
+    soup = bs(text, "lxml")
+    results = soup.find_all("div", {"class": "sticker-pack__header"})
+    if not results:
+        await event.edit("`No results found.`")
+        return
+    reply = f"**Sticker packs found for {split} are :**"
+    for pack in results:
+        if pack.button:
+            packtitle = (pack.find("div", "sticker-pack__title")).get_text()
+            packlink = (pack.a).get("href")
+            packid = (pack.button).get("data-popup")
+            reply += f"\n **• ID: **`{packid}`\n [{packtitle}]({packlink})"
+    await event.edit(reply)
+
+
 CMD_HELP.update(
     {
         "stickers": ">`.kang [emoji('s)]?`"
@@ -362,4 +389,6 @@ CMD_HELP.update(
         "\n\n>`.stkrinfo`"
         "\nUsage: Gets info about the sticker pack."
         "\n\n>`.get`"
-        "\nUsage: reply to a sticker to get 'PNG' file of sticker."})
+        "\nUsage: reply to a sticker to get 'PNG' file of sticker."
+        "\n\n>`.cbs <query>`"
+        "\nUsage: Search sticker pack with combot API."})
