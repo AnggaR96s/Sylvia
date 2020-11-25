@@ -95,7 +95,7 @@ async def torrent_download(event):
     await check_progress_for_dl(gid=gid, event=event, previous=None)
 
 
-@register(outgoing=True, pattern=r"^\.aurl(?: |$)(.*)")
+@register(outgoing=True, disable_errors=True, pattern=r"^\.aurl(?: |$)(.*)")
 async def aurl_download(event):
     uri = [event.pattern_match.group(1)]
     try:  # Add URL Into Queue
