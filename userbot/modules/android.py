@@ -233,7 +233,8 @@ async def download_api(dl):
     return
 
 
-@register(outgoing=True, pattern=r"^\.specs(?: |)([\S]*)(?: |)([\s\S]*)")
+@register(outgoing=True, disable_errors=True,
+          pattern=r"^\.specs(?: |)([\S]*)(?: |)([\s\S]*)")
 async def devices_specifications(request):
     """ Mobile devices specifications """
     textx = await request.get_reply_message()
