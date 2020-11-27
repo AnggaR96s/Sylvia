@@ -23,8 +23,8 @@ gitpython
 glitch_this
 google-api-python-client
 google-auth-oauthlib
-googletrans
 gsearch
+google_trans_new
 gTTS
 gTTS-token
 hachoir

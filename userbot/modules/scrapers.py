@@ -18,7 +18,7 @@ from urllib.parse import quote_plus
 import wikipedia
 from bs4 import BeautifulSoup
 from emoji import get_emoji_regexp
-from googletrans import LANGUAGES, Translator
+from google_trans_new import LANGUAGES, google_translator
 from gtts import gTTS
 from gtts.lang import tts_langs
 from requests import get
@@ -38,6 +38,7 @@ from youtube_dl.utils import (
     UnavailableVideoError,
     XAttrMetadataError,
 )
+from youtube_search import YoutubeSearch
 
 from userbot import (
     BOTLOG,
@@ -49,7 +50,6 @@ from userbot import (
 )
 from userbot.events import register
 from userbot.utils import chrome, googleimagesdownload, progress
-from youtube_search import YoutubeSearch
 
 CARBONLANG = "auto"
 TTS_LANG = "id"
@@ -95,7 +95,10 @@ async def carbon_api(e):
     await e.edit("`Processing...\n100%`")
     await e.edit("`Uploading...`")
     await e.client.send_file(
-        e.chat_id, file_path, force_document=False, reply_to=e.message.reply_to_msg_id,
+        e.chat_id,
+        file_path,
+        force_document=False,
+        reply_to=e.message.reply_to_msg_id,
     )
 
     os.remove(file_path)
@@ -433,7 +436,7 @@ async def imdb(e):
 @register(outgoing=True, pattern=r"^\.trt(?: |$)([\s\S]*)")
 async def translateme(trans):
     """ For .trt command, translate the given text using Google Translate. """
-    translator = Translator()
+    translator = google_translator()
     textx = await trans.get_reply_message()
     message = trans.pattern_match.group(1)
     if message:
@@ -443,14 +446,20 @@ async def translateme(trans):
     else:
         return await trans.edit("`Give a text or reply to a message to translate!`")
 
+    await trans.edit("**Processing...**")
+    translator = google_translator()
     try:
-        reply_text = translator.translate(deEmojify(message), dest=TRT_LANG)
+        reply_text = translator.translate(
+            deEmojify(message), lang_tgt=TRT_LANG)
     except ValueError:
         return await trans.edit("Invalid destination language.")
 
-    source_lan = LANGUAGES[f"{reply_text.src.lower()}"]
-    transl_lan = LANGUAGES[f"{reply_text.dest.lower()}"]
-    reply_text = f"From **{source_lan.title()}**\nTo **{transl_lan.title()}:**\n\n{reply_text.text}"
+    try:
+        source_lan = translator.detect(deEmojify(message))[1].title()
+    except BaseException:
+        source_lan = "(Google didn't provide this info)"
+
+    reply_text = f"From: **{source_lan}**\nTo: **{LANGUAGES.get(TRT_LANG).title()}**\n\n{reply_text}"
 
     await trans.edit(reply_text)
     if BOTLOG:
