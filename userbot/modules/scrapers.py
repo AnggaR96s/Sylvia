@@ -462,11 +462,6 @@ async def translateme(trans):
     reply_text = f"From: **{source_lan}**\nTo: **{LANGUAGES.get(TRT_LANG).title()}**\n\n{reply_text}"
 
     await trans.edit(reply_text)
-    if BOTLOG:
-        await trans.client.send_message(
-            BOTLOG_CHATID,
-            f"Translated some {source_lan.title()} stuff to {transl_lan.title()} just now.",
-        )
 
 
 @register(pattern=".lang (trt|tts) (.*)", outgoing=True)
