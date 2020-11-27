@@ -6,5 +6,5 @@ FROM gengkapak/hirsute:userbot
 RUN git clone -b master https://gitlab.com/anggars/DCLXVI /home/gengkapak/dclxvi/
 RUN mkdir /home/gengkapak/dclxvi/bin/
 WORKDIR /home/gengkapak/dclxvi/
-
+RUN pip3 install google_trans_new
 CMD ["python3","-m","userbot"]
