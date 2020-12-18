@@ -28,11 +28,10 @@ async def xmr(nanopool):
 
     result = (
         f"**Mining Status**:\n"
-        f"**Wallet :** `{WALLET}`\n"
+        f"**Details :** [Nanopool](https://xmr.nanopool.org/account/{WALLET})\n"
         f"**Unconfirmed :** `{unc} XMR`\n"
         f"**Balance :** `{bal} XMR`\n"
-        f"**Hashrate :** `{hs} H/s`"
-    )
+        f"**Hashrate :** `{hs} H/s`")
 
     await nanopool.edit(result)
 
