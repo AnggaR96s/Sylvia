@@ -19,10 +19,12 @@ async def xmr(nanopool):
     request = requests.get(url)
     parsed = json.loads(request.text)
 
-    acc = WALLET
-    unc = parsed["data"]["unconfirmed_balance"]
-    bal = acc = parsed["data"]["balance"]
-    hs = parsed["data"]["hashrate"]
+    try:
+        unc = parsed["data"]["unconfirmed_balance"]
+        bal = parsed["data"]["balance"]
+        hs = parsed["data"]["hashrate"]
+    except KeyError:
+        return await nanopool.edit("**Wallet not found or API error!!**")
 
     result = (
         f"**Mining Status**:\n"
