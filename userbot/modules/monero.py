@@ -1,3 +1,4 @@
+import datetime as dt
 import json
 
 import requests
@@ -36,6 +37,8 @@ async def xmr(nanopool):
         he = dparsed["height"]
         p = pparsed["IDR"]
         idr = float(p) * float(bal)
+        d = wparsed["data"][0]["date"]
+        dp = dt.datetime.fromtimestamp(int(d) / 1)
         tx = wparsed["data"][0]["txHash"]
         am = wparsed["data"][0]["amount"]
         cn = wparsed["data"][0]["confirmed"]
@@ -52,6 +55,7 @@ async def xmr(nanopool):
         f"**XMR :** `{bal}\n`"
         f"**IDR :** `{idr}\n\n`"
         "**Latest Withdraw :**\n"
+        f"**Date :** `{dp}`\n"
         f"**TxHash :** [Details](https://xmrchain.net/tx/{tx})\n"
         f"**Amount :** `{am} XMR`\n"
         f"**Confirmed :** `{cn}`\n\n"
