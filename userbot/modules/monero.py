@@ -62,7 +62,7 @@ async def xmr(nanopool):
         "**Coin Status :**\n"
         f"**XMR Price :** `{p} IDR`\n"
         f"**Difficulty :** `{diff}\n`"
-        f"**Height :** `{he}`")
+        f"**Height :** [{he}](https://xmrchain.net/block/{he})")
 
     await nanopool.edit(result)
 
