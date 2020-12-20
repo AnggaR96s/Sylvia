@@ -20,6 +20,7 @@ async def xmr(nanopool):
     durl = "https://localmonero.co/blocks/api/get_stats"
     purl = "https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms=IDR"
     wurl = f"https://api.nanopool.org/v1/xmr/payments/{WALLET}"
+    lurl = f"https://api.nanopool.org/v1/xmr/shareratehistory/{WALLET}"
     request = requests.get(url)
     parsed = json.loads(request.text)
     drequest = requests.get(durl)
@@ -28,6 +29,8 @@ async def xmr(nanopool):
     pparsed = json.loads(prequest.text)
     wrequest = requests.get(wurl)
     wparsed = json.loads(wrequest.text)
+    lrequest = requests.get(lurl)
+    lparsed = json.loads(lrequest.text)
 
     try:
         unc = parsed["data"]["unconfirmed_balance"]
@@ -42,6 +45,7 @@ async def xmr(nanopool):
         tx = wparsed["data"][0]["txHash"]
         am = wparsed["data"][0]["amount"]
         cn = wparsed["data"][0]["confirmed"]
+        sh = lparsed["data"][0]["shares"]
 
     except KeyError:
         return await nanopool.edit("**Wallet not found or API error!!**")
@@ -50,6 +54,7 @@ async def xmr(nanopool):
         f"**Mining Status**:\n"
         f"**Details :** [Nanopool](https://xmr.nanopool.org/account/{WALLET})\n"
         f"**Hashrate :** `{hs} H/s`\n"
+        f"**Total Share :** `{sh}`\n"
         f"**Unconfirmed :** `{unc} XMR`\n"
         f"**Balance Details :**\n"
         f"**XMR :** `{bal}\n`"
