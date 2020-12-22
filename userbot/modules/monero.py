@@ -44,6 +44,7 @@ async def xmr(nanopool):
         dp = dt.datetime.fromtimestamp(int(d) / 1)
         tx = wparsed["data"][0]["txHash"]
         am = wparsed["data"][0]["amount"]
+        rp = float(p) * float(am)
         cn = wparsed["data"][0]["confirmed"]
         sh = lparsed["data"][0]["shares"]
 
@@ -63,6 +64,7 @@ async def xmr(nanopool):
         f"**Date :** `{dp}`\n"
         f"**TxHash :** [Details](https://xmrchain.net/tx/{tx})\n"
         f"**Amount :** `{am} XMR`\n"
+        f"**@ :** `Rp.{rp}`\n"
         f"**Confirmed :** `{cn}`\n\n"
         "**Coin Status :**\n"
         f"**XMR Price :** `{p} IDR`\n"
