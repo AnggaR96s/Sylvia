@@ -242,9 +242,6 @@ time.tzset()
 # Uptobox
 USR_TOKEN = os.environ.get("USR_TOKEN_UPTOBOX", None)
 
-# Nanopool
-WALLET = os.environ.get("WALLET", None)
-
 # Setting Up CloudMail.ru and MEGA.nz extractor binaries,
 # and giving them correct perms to work properly.
 if not os.path.exists("bin"):
