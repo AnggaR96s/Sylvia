@@ -201,7 +201,8 @@ async def paste(event):
     else:
         return await event.edit("**Read** `.help paste`**.**")
 
-    response = post("https://api.katb.in/api/paste", json={"content": message}).json()
+    response = post("https://api.katb.in/api/paste",
+                    json={"content": message}).json()
 
     if response["msg"] == "Successfully created paste":
         await event.edit(

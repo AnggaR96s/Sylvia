@@ -783,9 +783,8 @@ async def lists(gdrive):
     if service is False:
         return False
     message = ""
-    fields = (
-        "nextPageToken, files(name, size, id, " "mimeType, webViewLink, webContentLink)"
-    )
+    fields = ("nextPageToken, files(name, size, id, "
+              "mimeType, webViewLink, webContentLink)")
     page_token = None
     result = []
     while True:
@@ -1479,7 +1478,6 @@ async def gdrive_clone(event):
         _icon = "📄️"
     msg = f"`{_mime_type}`\n\n{_icon} [{_name}]({_link})\nSize : `{humanbytes(int(_size))}`"
     await event.edit(msg)
-
 
 
 CMD_HELP.update({"gdrive": ">`.gdauth`"
