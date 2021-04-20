@@ -40,10 +40,8 @@ async def butts(e):
     await e.edit("`Finding some beautiful butts...`")
     await sleep(3)
     await e.edit("`Sending some beautiful butts...`")
-    nsfw = requests.get("http://api.obutts.ru/noise/1").json()[0]["preview"]
-    urllib.request.urlretrieve(
-        "http://media.obutts.ru/{}".format(nsfw), "*.jpg")
-    os.rename("*.jpg", "butts.jpg")
+    url = random.choice(list(open('userbot/utils/butts.txt')))
+    urllib.request.urlretrieve(url, 'butts.jpg')
     await bot.send_file(e.chat_id, "butts.jpg")
     os.remove("butts.jpg")
     await e.delete()
