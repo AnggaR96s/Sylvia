@@ -6,7 +6,7 @@ FROM gengkapak/hirsute:userbot
 RUN git clone -b master https://gitlab.com/jarviscoldbox/Sylvia /home/gengkapak/dclxvi/
 RUN mkdir /home/gengkapak/dclxvi/bin/
 WORKDIR /home/gengkapak/dclxvi/
-RUN pip3 install google_trans_new
+RUN pip3 install google_trans_new js2py
 
 EXPOSE 80 443
 
