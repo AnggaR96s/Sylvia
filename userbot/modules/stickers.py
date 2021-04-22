@@ -21,7 +21,7 @@ from telethon.tl.types import (
     MessageMediaPhoto,
 )
 
-from userbot import CMD_HELP, bot
+from userbot import CMD_HELP, NAMEPACK, bot
 from userbot.events import register
 
 KANGING_STR = [
@@ -103,8 +103,12 @@ async def kang(args):
                 # pack
                 emoji = splat[1]
 
-        packname = f"a{user.id}_by_{user.username}_{pack}"
-        packnick = f"@{user.username}'s kang pack Vol.{pack}"
+        if NAMEPACK is not None:
+            packname = f"a{user.id}_by_{NAMEPACK}_{pack}"
+            packnick = f"{NAMEPACK}'s kang pack Vol.{pack}"
+        else:
+            packname = f"a{user.id}_by_{user.username}_{pack}"
+            packnick = f"@{user.username}'s kang pack Vol.{pack}"
         cmd = "/newpack"
         file = io.BytesIO()
 
@@ -135,8 +139,12 @@ async def kang(args):
                 x = await conv.get_response()
                 while "120" in x.text:
                     pack += 1
-                    packname = f"a{user.id}_by_{user.username}_{pack}"
-                    packnick = f"@{user.username}'s kang pack Vol.{pack}"
+                    if NAMEPACK is not None:
+                        packname = f"a{user.id}_by_{NAMEPACK}_{pack}"
+                        packnick = f"{NAMEPACK}'s kang pack Vol.{pack}"
+                    else:
+                        packname = f"a{user.id}_by_{user.username}_{pack}"
+                        packnick = f"@{user.username}'s kang pack Vol.{pack}"
                     await args.edit(
                         "`Switching to Pack "
                         + str(pack)
