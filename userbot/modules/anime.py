@@ -730,6 +730,15 @@ def is_gif(file):
     return DocumentAttributeAnimated() in getattr(file, "document", file).attributes
 
 
+@register(outgoing=True, pattern=r"^\.aq ?(.*)")
+async def quote(e):
+    data = requests.get("https://animechan.vercel.app/api/random").json()
+    anime = data['anime']
+    character = data['character']
+    quote = data['quote']
+    await e.edit(f"<b><u>Anime:</b></u>\n<code>{anime}</code>\n\n<b><u>Character:</b></u>\n<code>{character}</code>\n\n<b><u>Quote:</u></b>\n<code>{quote}</code>", parse_mode="html")
+
+
 CMD_HELP.update(
     {
         "anime": ">`.anilist` <anime>"
@@ -749,6 +758,8 @@ CMD_HELP.update(
         ">`.smanga` <manga>"
         "\nUsage: Search manga.\n\n"
         ">`.whatanime` Reply to media: foto, gif or video."
-        "\nUsage: Find anime from replied media."
+        "\nUsage: Find anime from replied media.\n\n"
+        ">`.aq`"
+        "\nUsage: Get anime random quotes."
     }
 )
