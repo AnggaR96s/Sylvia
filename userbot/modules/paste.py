@@ -8,7 +8,7 @@ import os
 
 from requests import exceptions, get, post
 from telethon.tl.types import MessageMediaWebPage
-from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
+from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
 
 DOGBIN_URL = "https://del.dog/"
@@ -71,11 +71,6 @@ async def paste(pstl):
         reply_text = "`Failed to reach Dogbin`"
 
     await pstl.edit(reply_text)
-    if BOTLOG:
-        await pstl.client.send_message(
-            BOTLOG_CHATID,
-            "Paste query was executed successfully",
-        )
 
 
 @register(outgoing=True, pattern=r"^\.getpaste(?: |$)(.*)")
@@ -124,11 +119,6 @@ async def get_dogbin_content(dog_url):
         "\n\n`Content:` " + resp.text)
 
     await dog_url.edit(reply_text)
-    if BOTLOG:
-        await dog_url.client.send_message(
-            BOTLOG_CHATID,
-            "Get dogbin content query was executed successfully",
-        )
 
 
 @register(outgoing=True, pattern=r"^\.neko(?: |$)([\s\S]*)")
@@ -177,11 +167,6 @@ async def neko(nekobin):
         reply_text = "`Failed to reach Nekobin`"
 
     await nekobin.edit(reply_text)
-    if BOTLOG:
-        await nekobin.client.send_message(
-            BOTLOG_CHATID,
-            "Paste query was executed successfully",
-        )
 
 
 @register(outgoing=True, pattern=r"^\.kat(?:\s|$)([\s\S]*)")
