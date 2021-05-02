@@ -1497,15 +1497,7 @@ async def gtfo(e):
 @register(outgoing=True, pattern=r"^\.nih$")
 async def nih(e):
     if not e.text[0].isalpha() and e.text[0] not in ("/", "#", "@", "!"):
-        await e.edit(
-            r"`\n(\_/)`"
-            "`\n(●_●)`"
-            "`\n />🌹 *ini buat kamu`"
-            "`\n                    `"
-            r"`\n(\_/)`"
-            "`\n(●_●)`"
-            r"`\n🌹<\  *tapi boong`"
-        )
+        await e.edit("<code>(\\_/)</code>\n<code>(●_●)</code>\n<code>/>🌹 *ini buat kamu</code>\n\n<code>(\\_/)</code>\n<code>(●_●)</code>\n<code>🌹<\\ *tapi boong</code>", parse_mode="html")
 
 
 @register(outgoing=True, pattern=r"^\.fag$")
