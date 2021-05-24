@@ -96,9 +96,13 @@ async def deploy(event, repo, ups_rem, ac_br, txt):
                 f"{txt}\n" "`Invalid Heroku credentials for deploying userbot dyno.`"
             )
             return repo.__del__()
-        await event.edit(
-            "`[HEROKU]`" "\n`Userbot dyno build in progress, please wait...`"
-        )
+        try:
+            from userbot.modules.sql_helper.globals import addgvar, delgvar
+
+            delgvar("restartstatus")
+            addgvar("restartstatus", f"{event.chat_id}\n{event.id}")
+        except AttributeError:
+            pass
         ups_rem.fetch(ac_br)
         repo.git.reset("--hard", "FETCH_HEAD")
         heroku_git_url = heroku_app.git_url.replace(
@@ -114,7 +118,7 @@ async def deploy(event, repo, ups_rem, ac_br, txt):
         except Exception as error:
             await event.edit(f"{txt}\n`Here is the error log:\n{error}`")
             return repo.__del__()
-        build = app.builds(order_by="created_at", sort="desc")[0]
+        build = heroku_app.builds(order_by="created_at", sort="desc")[0]
         if build.status == "failed":
             await event.edit(
                 "`Build failed!\n" "Cancelled or there were some errors...`"
@@ -124,9 +128,7 @@ async def deploy(event, repo, ups_rem, ac_br, txt):
         else:
             await event.edit("`Successfully deployed!\n" "Restarting, please wait...`")
     else:
-        await event.edit(
-            "`[HEROKU]`\n" "`Please set up`  **HEROKU_API_KEY**  `variable...`"
-        )
+        await event.edit("**Please set up** `HEROKU_API_KEY` **variable.**")
     return
 
 
@@ -139,6 +141,15 @@ async def update(event, repo, ups_rem, ac_br):
     await event.edit(
         "`Successfully Updated!\n" "Bot is restarting... Wait for a second!`"
     )
+
+    try:
+        from userbot.modules.sql_helper.globals import addgvar, delgvar
+
+        delgvar("restartstatus")
+        addgvar("restartstatus", f"{event.chat_id}\n{event.id}")
+    except AttributeError:
+        pass
+
     # Spin a new instance of bot
     args = [sys.executable, "-m", "userbot"]
     execle(sys.executable, *args, environ)

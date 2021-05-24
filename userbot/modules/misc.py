@@ -55,10 +55,16 @@ async def killthebot(event):
 
 @register(outgoing=True, pattern=r"^\.restart$")
 async def killdabot(event):
-    await event.edit("`*i would be back in a moment*`")
-    if BOTLOG:
-        await event.client.send_message(BOTLOG_CHATID, "#RESTART \n" "Bot Restarted")
-    await bot.disconnect()
+    await event.edit("**Restarting...**")
+
+    try:
+        from userbot.modules.sql_helper.globals import addgvar, delgvar
+
+        delgvar("restartstatus")
+        addgvar("restartstatus", f"{event.chat_id}\n{event.id}")
+    except AttributeError:
+        pass
+
     # Spin a new instance of bot
     execl(sys.executable, sys.executable, *sys.argv)
     # Shut the existing one down

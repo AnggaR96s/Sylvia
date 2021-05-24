@@ -246,6 +246,9 @@ USR_TOKEN = os.environ.get("USR_TOKEN_UPTOBOX", None)
 # Sticker pack name
 NAMEPACK = os.environ.get("NAMEPACK", None)
 
+# Bot version
+BOT_VERSION = "DCLXVI-Slav01"
+
 # Setting Up CloudMail.ru and MEGA.nz extractor binaries,
 # and giving them correct perms to work properly.
 if not os.path.exists("bin"):
@@ -474,6 +477,33 @@ You can convert your account to bot and use them. Remember, you can't manage som
         )
         quit(1)
 
+
+async def update_restart_msg(chat_id, msg_id):
+    DEFAULTUSER = ALIVE_NAME or "Set `ALIVE_NAME` ConfigVar!"
+    message = (
+        f"**UserBot v{BOT_VERSION} is back up and running!**\n\n"
+        f"**Telethon:** {version.__version__}\n"
+        f"**Python:** {python_version()}\n"
+        f"**User:** {DEFAULTUSER}"
+    )
+    await bot.edit_message(chat_id, msg_id, message)
+    return True
+
+
+try:
+    from userbot.modules.sql_helper.globals import delgvar, gvarstatus
+
+    chat_id, msg_id = gvarstatus("restartstatus").split("\n")
+    with bot:
+        try:
+            bot.loop.run_until_complete(
+                update_restart_msg(
+                    int(chat_id), int(msg_id)))
+        except BaseException:
+            pass
+    delgvar("restartstatus")
+except AttributeError:
+    pass
 
 # Global Variables
 COUNT_MSG = 0
