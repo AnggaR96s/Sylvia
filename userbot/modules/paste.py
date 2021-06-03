@@ -38,7 +38,10 @@ async def paste(pstl):
                 m_list = fd.readlines()
             message = ""
             for m in m_list:
-                message += m.decode("UTF-8") + "\r"
+                try:
+                    message += m.decode("UTF-8") + "\r"
+                except UnicodeDecodeError:
+                    return await pstl.edit("**Can't Decode file to text!**")
             os.remove(downloaded_file_name)
         else:
             message = message.message
@@ -144,7 +147,10 @@ async def neko(nekobin):
                 m_list = fd.readlines()
             message = ""
             for m in m_list:
-                message += m.decode("UTF-8")
+                try:
+                    message += m.decode("UTF-8")
+                except UnicodeDecodeError:
+                    return await nekobin.edit("**Can't Decode file to text!**")
             os.remove(downloaded_file_name)
         else:
             message = message.text
@@ -191,7 +197,10 @@ async def kat(katbin):
                 m_list = fd.readlines()
             message = ""
             for m in m_list:
-                message += m.decode("UTF-8")
+                try:
+                    message += m.decode("UTF-8")
+                except UnicodeDecodeError:
+                    return await katbin.edit("**Can't Decode file to text!**")
             os.remove(downloaded_file_name)
         else:
             message = message.text
