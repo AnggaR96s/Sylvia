@@ -7,7 +7,6 @@
 import os
 
 from requests import exceptions, get, post
-from telethon.tl.types import MessageMediaWebPage
 from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
 
@@ -129,7 +128,7 @@ async def neko(nekobin):
     reply_id = nekobin.reply_to_msg_id
 
     if not match and not reply_id:
-        return await pstl.edit("`Cannot paste text.`")
+        return await nekobin.edit("`Cannot paste text.`")
 
     if match:
         message = match
@@ -169,32 +168,45 @@ async def neko(nekobin):
     await nekobin.edit(reply_text)
 
 
-@register(outgoing=True, pattern=r"^\.kat(?:\s|$)([\s\S]*)")
-async def paste(event):
-    """Pastes given text to Katb.in"""
-    await event.edit("**Processing...**")
+@register(outgoing=True, pattern=r"^\.kat(?: |$)([\s\S]*)")
+async def kat(katbin):
+    """For .kat command, pastes the text directly to katbin."""
+    match = katbin.pattern_match.group(1).strip()
+    reply_id = katbin.reply_to_msg_id
 
-    if event.is_reply:
-        reply = await event.get_reply_message()
-        if reply.media and not isinstance(reply.media, MessageMediaWebPage):
-            return await event.edit("**Reply to some text!**")
-        message = reply.message
+    if not match and not reply_id:
+        return await katbin.edit("`Cannot paste text.`")
 
-    elif event.pattern_match.group(1).strip():
-        message = event.pattern_match.group(1).strip()
+    if match:
+        message = match
+    elif reply_id:
+        message = await katbin.get_reply_message()
+        if message.media:
+            downloaded_file_name = await katbin.client.download_media(
+                message,
+                TEMP_DOWNLOAD_DIRECTORY,
+            )
+            m_list = None
+            with open(downloaded_file_name, "rb") as fd:
+                m_list = fd.readlines()
+            message = ""
+            for m in m_list:
+                message += m.decode("UTF-8")
+            os.remove(downloaded_file_name)
+        else:
+            message = message.text
 
-    else:
-        return await event.edit("**Read** `.help paste`**.**")
+    # Katbin
+    await katbin.edit("`Pasting text . . .`")
+    resp = post("https://api.katb.in/api/paste",
+                json={"content": message}).json()
 
-    response = post("https://api.katb.in/api/paste",
-                    json={"content": message}).json()
-
-    if response["msg"] == "Successfully created paste":
-        await event.edit(
-            f"**Pasted successfully:** [Katb.in](https://katb.in/{response['paste_id']})\n"
+    if resp["msg"] == "Successfully created paste":
+        await katbin.edit(
+            f"**Pasted successfully:** [Katb.in](https://katb.in/{resp['paste_id']})\n"
         )
     else:
-        await event.edit("**Katb.in seems to be down.**")
+        await katbin.edit("**Katb.in seems to be down.**")
 
 CMD_HELP.update(
     {
