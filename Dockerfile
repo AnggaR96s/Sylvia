@@ -1,4 +1,4 @@
-FROM gengkapak/hirsute:userbot
+FROM gengkapak/impish:userbot
 
 #
 # Clone repo and prepare working directory
