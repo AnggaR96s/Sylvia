@@ -11,7 +11,8 @@ import urllib.parse
 from asyncio import create_subprocess_shell as asyncSubprocess
 from asyncio.subprocess import PIPE as asyncPIPE
 from random import choice
-
+from urllib.parse import urlparse
+from base64 import standard_b64encode
 import aiohttp
 import requests
 from bs4 import BeautifulSoup
@@ -20,7 +21,7 @@ from js2py import EvalJs
 
 from userbot import CMD_HELP, USR_TOKEN
 from userbot.events import register
-from userbot.utils import time_formatter
+from userbot.utils import humanbytes, time_formatter
 
 
 async def subprocess_run(cmd):
@@ -73,6 +74,8 @@ async def direct_link_generator(request):
             reply += await github(link)
         elif "androidfilehost.com" in link:
             reply += await androidfilehost(link)
+        elif "1drv.ms" in link:
+            reply += await onedrive(link)
         elif "uptobox.com" in link:
             await uptobox(request, link)
             return None
@@ -352,6 +355,25 @@ async def uptobox(request, url: str) -> str:
                     f"`status`: **{status}**"
                 )
                 return
+
+
+async def onedrive(link: str) -> str:
+    link_without_query = urlparse(link)._replace(query=None).geturl()
+    direct_link_encoded = str(
+        standard_b64encode(
+            bytes(
+                link_without_query,
+                "utf-8")),
+        "utf-8")
+    direct_link1 = f"https://api.onedrive.com/v1.0/shares/u!{direct_link_encoded}/root/content"
+    resp = requests.head(direct_link1)
+    if resp.status_code != 302:
+        return "`Error: Unauthorized link, the link may be private`"
+    dl_link = resp.next.url
+    file_name = dl_link.rsplit("/", 1)[1]
+    resp2 = requests.head(dl_link)
+    dl_size = humanbytes(int(resp2.headers["Content-Length"]))
+    return f"[{file_name} ({dl_size})]({dl_link})"
 
 
 async def useragent():
