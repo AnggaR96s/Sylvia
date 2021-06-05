@@ -18,7 +18,7 @@ from shutil import which
 import psutil
 from telethon import __version__, version
 
-from userbot import ALIVE_NAME, BOT_VERSION, CMD_HELP, DB_URI, HEADER, IMG, StartTime, bot
+from userbot import ALIVE_NAME, BOT_VERSION, CMD_HELP, DB_URI, HEADER, IMG, JOKES, StartTime, bot
 from userbot.events import register
 
 # ================= CONSTANT =================
@@ -226,6 +226,12 @@ async def amireallyalive(alive):
     """ For .on command, check if the bot is running.  """
     uptime = await get_readable_time((time.time() - StartTime))
     img = IMG
+    jk = await asyncrunapp(
+        "pyjoke", "-c", "all", stdout=asyncPIPE, stderr=asyncPIPE,
+    )
+
+    stdout, stderr = await jk.communicate()
+    jokes = str(stdout.decode().strip())
     db = check_data_base_heal_th()
     os = distro.linux_distribution(
         full_distribution_name=False)[0].capitalize()
@@ -245,14 +251,16 @@ async def amireallyalive(alive):
     if IMG:
         try:
             img = IMG
-            await bot.send_file(alive.chat_id, img, caption=caption)
+            if JOKES:
+                await bot.send_file(alive.chat_id, img, caption=caption + f"\n\n**{jokes}**")
+            else:
+                await bot.send_file(alive.chat_id, img, caption=caption)
             await alive.delete()
         except BaseException:
             await alive.edit(
                 caption + "\n\n *`The provided logo is invalid."
                 "\nMake sure the link is directed to the logo picture`"
             )
-
     else:
         await alive.edit(caption)
 

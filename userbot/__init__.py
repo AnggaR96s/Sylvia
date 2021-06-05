@@ -228,6 +228,9 @@ WATCH_COUNTRY = os.environ.get("WATCH_COUNTRY", None)
 # Custom Alive Header
 HEADER = os.environ.get("HEADER", "Userbot is alive with status:")
 
+# Jokes alive
+JOKES = os.environ.get("JOKES", None)
+
 # Deezloader
 DEEZER_ARL_TOKEN = os.environ.get("DEEZER_ARL_TOKEN", None)
 

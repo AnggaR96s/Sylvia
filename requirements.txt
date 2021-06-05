@@ -51,6 +51,7 @@ pybase64
 PyDictionary
 pyfiglet
 PyGithub
+pyjokes
 pylast
 PyLyrics
 pySmartDL
