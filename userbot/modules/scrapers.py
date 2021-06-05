@@ -286,10 +286,6 @@ async def urban_dict(ud_e):
             + mean[0]["example"]
             + "__"
         )
-        if BOTLOG:
-            await ud_e.client.send_message(
-                BOTLOG_CHATID, "ud query `" + query + "` executed successfully."
-            )
     else:
         await ud_e.edit("No result found for **" + query + "**")
 
