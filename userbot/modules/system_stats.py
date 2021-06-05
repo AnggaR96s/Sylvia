@@ -4,6 +4,7 @@
 # you may not use this file except in compliance with the License.
 #
 """ Userbot module for getting information about the server. """
+import distro
 import platform
 import sys
 import time
@@ -17,7 +18,7 @@ from shutil import which
 import psutil
 from telethon import __version__, version
 
-from userbot import ALIVE_NAME, CMD_HELP, DB_URI, HEADER, IMG, StartTime, bot
+from userbot import ALIVE_NAME, BOT_VERSION, CMD_HELP, DB_URI, HEADER, IMG, StartTime, bot
 from userbot.events import register
 
 # ================= CONSTANT =================
@@ -226,10 +227,15 @@ async def amireallyalive(alive):
     uptime = await get_readable_time((time.time() - StartTime))
     img = IMG
     db = check_data_base_heal_th()
+    os = distro.linux_distribution(
+        full_distribution_name=False)[0].capitalize()
+    ver = distro.linux_distribution(full_distribution_name=False)[1]
     caption = (
         "`"
         f"{HEADER}\n\n"
         f"👤 User             : {DEFAULTUSER}\n\n"
+        f"🤖 Bot Version      : {BOT_VERSION}\n\n"
+        f"🖥 Run On           : {os} Version {ver}\n\n"
         f"🐍 Python Version   : {python_version()}\n\n"
         f"💻 Telethon Version : {version.__version__}\n\n"
         f"🕒 Bot Uptime       : {uptime}\n\n"
