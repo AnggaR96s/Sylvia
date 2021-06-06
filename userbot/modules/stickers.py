@@ -434,6 +434,8 @@ CMD_HELP.update(
         "\n\n>`.kang (emoji['s]]?` [number]?"
         "\nUsage: Kang's the sticker/image to the specified pack but uses 🤔 as emoji "
         "or choose the emoji you want to."
+        "\n\n>`.pack s or a <name>`"
+        "\nUsage: Change (s)ticker or (a)nimated  kang pack."
         "\n\n>`.stkrinfo`"
         "\nUsage: Gets info about the sticker pack."
         "\n\n>`.get`"
