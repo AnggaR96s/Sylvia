@@ -21,7 +21,7 @@ from telethon.tl.types import (
     MessageMediaPhoto,
 )
 
-from userbot import CMD_HELP, NAMEPACK, bot
+from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot
 from userbot.events import register
 
 KANGING_STR = [
@@ -38,6 +38,35 @@ KANGING_STR = [
 ]
 
 COMBOT = "https://combot.org/telegram/stickers?q="
+
+
+@register(pattern=r"\.pack (s|a) (.*)", outgoing=True)
+async def lang(value):
+    util = value.pattern_match.group(1)
+    try:
+        from userbot.modules.sql_helper.globals import gvarstatus, addgvar, delgvar
+    except AttributeError:
+        return await lang.edit("**Running on Non-SQL mode!**")
+
+    if util == "s":
+        ps = "Sticker"
+        arg = value.pattern_match.group(2)
+        if gvarstatus("STPACK"):
+            delgvar("STPACK")
+        addgvar("STPACK", arg)
+        pn = arg
+    elif util == "a":
+        ps = "Animation"
+        arg = value.pattern_match.group(2)
+        if gvarstatus("ANPACK"):
+            delgvar("ANPACK")
+        addgvar("ANPACK", arg)
+        pn = arg
+    await value.edit(f"**Kang Pack for {ps} changed to {pn.title()}.**")
+    if BOTLOG:
+        await value.client.send_message(
+            BOTLOG_CHATID,
+            f"`Kang Pack for {ps} changed to {pn.title()}.`")
 
 
 @register(outgoing=True, pattern=r"^\.kang")
@@ -103,9 +132,15 @@ async def kang(args):
                 # pack
                 emoji = splat[1]
 
-        if NAMEPACK is not None:
-            packname = f"a{user.id}_by_{NAMEPACK}_{pack}"
-            packnick = f"{NAMEPACK}'s kang pack Vol.{pack}"
+        try:
+            from userbot.modules.sql_helper.globals import gvarstatus
+        except AttributeError:
+            return await query.edit("**Running on Non-SQL mode!**")
+
+        if gvarstatus("STPACK") is not None:
+            cust = str(gvarstatus("STPACK"))
+            packname = f"a{user.id}_by_{cust}_{pack}"
+            packnick = f"{cust}'s kang pack Vol.{pack}"
         else:
             packname = f"a{user.id}_by_{user.username}_{pack}"
             packnick = f"@{user.username}'s kang pack Vol.{pack}"
@@ -139,9 +174,14 @@ async def kang(args):
                 x = await conv.get_response()
                 while "120" in x.text:
                     pack += 1
-                    if NAMEPACK is not None:
-                        packname = f"a{user.id}_by_{NAMEPACK}_{pack}"
-                        packnick = f"{NAMEPACK}'s kang pack Vol.{pack}"
+                    try:
+                        from userbot.modules.sql_helper.globals import gvarstatus
+                    except AttributeError:
+                        return await query.edit("**Running on Non-SQL mode!**")
+                    if gvarstatus("ANPACK") is not None:
+                        cuan = str(gvarstatus("ANPACK"))
+                        packname = f"a{user.id}_by_{cuan}_{pack}"
+                        packnick = f"{cuan}'s kang pack Vol.{pack}"
                     else:
                         packname = f"a{user.id}_by_{user.username}_{pack}"
                         packnick = f"@{user.username}'s kang pack Vol.{pack}"
