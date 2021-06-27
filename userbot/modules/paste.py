@@ -212,7 +212,7 @@ async def kat(katbin):
 
     if resp["msg"] == "Successfully created paste":
         await katbin.edit(
-            f"**Pasted successfully:** [Katb.in](https://katb.in/{resp['paste_id']})\n"
+            f"**Pasted successfully:**\n[Katb.in](https://katb.in/{resp['paste_id']})\n[View RAW](https://katb.in/{resp['paste_id']}/raw)"
         )
     else:
         await katbin.edit("**Katb.in seems to be down.**")
