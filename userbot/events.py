@@ -16,6 +16,7 @@ from traceback import format_exc
 from telethon import events
 
 from userbot import BOTLOG_CHATID, LOGSPAMMER, bot
+from userbot.utils.pastebin import PasteBin
 
 
 def register(**args):
@@ -151,8 +152,13 @@ def register(**args):
                         \nThe error logs are stored in the userbot's log chat.`"
                         )
 
-                    await check.client.send_file(send_to, "crash.txt", caption=text)
-                    remove("crash.txt")
+                        async with PasteBin(ftext) as client:
+                            await client.post()
+                            if client:
+                                text += f"\n\nPasted to : [URL]({client.raw_link})"
+
+                        await check.client.send_file(send_to, "crash.txt", caption=text)
+                        remove("crash.txt")
             else:
                 pass
 
