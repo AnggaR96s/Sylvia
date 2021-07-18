@@ -83,6 +83,24 @@ async def psu(event):
         cpuu += f"`Core {i}  : {percentage}%`\n"
     cpuu += "**Total CPU Usage**\n"
     cpuu += f"`All Core: {psutil.cpu_percent()}%`\n"
+    # Disk Usage
+    partitions = psutil.disk_partitions()
+    for partition in partitions:
+        device = {partition.device}
+        mountpoint = {partition.mountpoint}
+        fstype = {partition.fstype}
+        try:
+            partition_usage = psutil.disk_usage(partition.mountpoint)
+        except PermissionError:
+            continue
+    disk = "**Disk Usage**\n"
+    disk += f"`Device    : {device}`\n"
+    disk += f"`Mountpoint: {mountpoint}`\n"
+    disk += f"`FS Type   : {fstype}`\n"
+    disk += f"`Total Size: {get_size(partition_usage.total)}`\n"
+    disk += f"`Used      : {get_size(partition_usage.used)}`\n"
+    disk += f"`Free      : {get_size(partition_usage.free)}`\n"
+    disk += f"`Percentage: {partition_usage.percent}%`\n"
     # RAM Usage
     svmem = psutil.virtual_memory()
     memm = "**Memory Usage**\n"
@@ -94,8 +112,10 @@ async def psu(event):
     bw = "**Bandwith Usage**\n"
     bw += f"`Upload  : {get_size(psutil.net_io_counters().bytes_sent)}`\n"
     bw += f"`Download: {get_size(psutil.net_io_counters().bytes_recv)}`\n"
+    # Help Strings
     help_string = f"{str(softw)}\n"
     help_string += f"{str(cpuu)}\n"
+    help_string += f"{str(disk)}\n"
     help_string += f"{str(memm)}\n"
     help_string += f"{str(bw)}\n"
     help_string += "**Engine Info**\n"
