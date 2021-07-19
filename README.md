@@ -1,18 +1,18 @@
-# DCLXVI UserBot Project
+# Sylvia UserBot Project
 
 <p align="center">
-    <a href="https://github.com/GengKapak/DCLXVI/actions?query=PEP8"> <img src="https://github.com/GengKapak/DCLXVI/workflows/PEP8/badge.svg?branch=master" alt="PEP8" /></a>
-    <a href="https://github.styleci.io/repos/263736411?branch=master"><img src="https://github.styleci.io/repos/263736411/shield?branch=master" alt="StyleCI"></a><br>
-    <a href="https://app.codacy.com/gh/GengKapak/DCLXVI/dashboard"> <img src="https://img.shields.io/codacy/grade/a8f0747a964e4712818a28d2a7f4edd3?color=blue&logo=codacy&style=for-the-badge" alt="Codacy" /></a>
-    <a href="https://github.com/GengKapak/DCLXVI"> <img src="https://img.shields.io/github/repo-size/GengKapak/DCLXVI?logo=github&style=for-the-badge" /></a>
-    <a href="https://github.com/GengKapak/DCLXVI/graphs/contributors"> <img src="https://img.shields.io/github/contributors-anon/GengKapak/DCLXVI?color=blue&label=all%20contributors&logo=github&style=for-the-badge" /></a>
-    <a href="https://github.com/GengKapak/DCLXVI/commits/master"> <img src="https://img.shields.io/github/last-commit/GengKapak/DCLXVI?color=blue&logo=github&style=for-the-badge" /></a>
-    <a href="https://github.com/GengKapak/DCLXVI/issues"> <img src="https://img.shields.io/github/issues/GengKapak/DCLXVI?color=blue&logo=github&style=for-the-badge" /></a>
-    <a href="https://github.com/GengKapak/DCLXVI/network/members"> <img src="https://img.shields.io/github/forks/GengKapak/DCLXVI?logo=github&style=for-the-badge" /></a>
-    <a href="https://hub.docker.com/r/gengkapak/archlinux"> <img src="https://img.shields.io/docker/image-size/gengkapak/archlinux/latest?label=docker%20image%20size&logo=docker&style=for-the-badge" /></a>
-    <a href="https://hub.docker.com/r/gengkapak/archlinux/tags"> <img src="https://img.shields.io/docker/v/gengkapak/archlinux/latest?label=docker%20version&logo=docker&style=for-the-badge" /></a>
+    <a href="https://github.com/AnggaR96s/Sylvia/actions?query=PEP8"> <img src="https://github.com/AnggaR96s/Sylvia/workflows/PEP8/badge.svg?branch=master" alt="PEP8" /></a>
+    <a href="https://github.styleci.io/repos/284974022?branch=master"><img src="https://github.styleci.io/repos/284974022/shield?branch=master" alt="StyleCI"></a><br>
+    <a href="https://app.codacy.com/gh/AnggaR96s/Sylvia/dashboard"> <img src="https://img.shields.io/codacy/grade/0de94f071b2642bbb016101b2877f308?color=blue&logo=codacy&style=for-the-badge" alt="Codacy" /></a>
+    <a href="https://github.com/AnggaR96s/Sylvia"> <img src="https://img.shields.io/github/repo-size/AnggaR96s/Sylvia?logo=github&style=for-the-badge" /></a>
+    <a href="https://github.com/AnggaR96s/Sylvia/graphs/contributors"> <img src="https://img.shields.io/github/contributors-anon/AnggaR96s/Sylvia?color=blue&label=all%20contributors&logo=github&style=for-the-badge" /></a>
+    <a href="https://github.com/AnggaR96s/Sylvia/commits/master"> <img src="https://img.shields.io/github/last-commit/AnggaR96s/Sylvia?color=blue&logo=github&style=for-the-badge" /></a>
+    <a href="https://github.com/AnggaR96s/Sylvia/issues"> <img src="https://img.shields.io/github/issues/AnggaR96s/Sylvia?color=blue&logo=github&style=for-the-badge" /></a>
+    <a href="https://github.com/AnggaR96s/Sylvia/network/members"> <img src="https://img.shields.io/github/forks/AnggaR96s/Sylvia?logo=github&style=for-the-badge" /></a>
+    <a href="https://hub.docker.com/r/gengkapak/impish"> <img src="https://img.shields.io/docker/image-size/gengkapak/impish/userbot?label=docker%20image%20size&logo=docker&style=for-the-badge" /></a>
+    <a href="https://hub.docker.com/r/gengkapak/impish/tags"> <img src="https://img.shields.io/docker/v/gengkapak/impish?userbot=docker%20version&logo=docker&style=for-the-badge" /></a>
     <a href="https://pypi.org/project/Telethon/"> <img src="https://img.shields.io/pypi/v/telethon?label=telethon&logo=pypi&logoColor=white&style=for-the-badge" /></a>
-    <img src="https://telegra.ph/file/2a7b0bd8547a80c019493.jpg" alt="Image" width="800" height="600" />
+    <img src="https://i.pinimg.com/736x/cb/b6/83/cbb68378e1cd356648f16d46d7efa108--enigma-duke.jpg" alt="Image" width="800" height="600" />
 </p>
 
 ```
@@ -55,4 +55,4 @@ Deploy to Heroku:
 
 ## Credits
 
-Huge thanks to [everyone](https://github.com/GengKapak/DCLXVI/graphs/contributors) who have helped make this userbot awesome!!</p>
+Huge thanks to [everyone](https://github.com/AnggaR96s/Sylvia/graphs/contributors) who have helped make this userbot awesome!!</p>
