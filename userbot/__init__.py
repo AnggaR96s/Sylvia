@@ -287,7 +287,7 @@ def migration_workaround():
     if old_ip == new_ip:
         return None
 
-    sleep_time = 180
+    sleep_time = 60
     LOGS.info(
         f"A change in IP address is detected, waiting for {sleep_time / 60} minutes before starting the bot."
     )
