@@ -1,4 +1,4 @@
-FROM gengkapak/impish:userbot
+FROM gengkapak/userbot:vc
 
 #
 # Clone repo and prepare working directory
@@ -6,7 +6,7 @@ FROM gengkapak/impish:userbot
 RUN git clone -b master https://gitlab.com/jarviscoldbox/Sylvia /home/gengkapak/dclxvi/
 RUN mkdir /home/gengkapak/dclxvi/bin/
 WORKDIR /home/gengkapak/dclxvi/
-RUN pip3 install google_trans_new js2py distro pyjokes
+RUN pip3 install google_trans_new js2py distro pyjokes pyrogram python-decouple py-tgcalls-wrapper
 
 EXPOSE 80 443
 
