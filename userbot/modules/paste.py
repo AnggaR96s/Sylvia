@@ -3,20 +3,20 @@
 # Licensed under the Raphielscape Public License, Version 1.d (the "License");
 # you may not use this file except in compliance with the License.
 #
-""" Userbot module containing commands for interacting with dogbin(https://del.dog)"""
+""" Userbot module containing commands for interacting with SlavBin(https://slav.gengkapak.my.id)"""
 import os
 
 from requests import exceptions, get, post
 from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
 
-DOGBIN_URL = "https://del.dog/"
+DOGBIN_URL = "https://slav.gengkapak.my.id/"
 NEKOBIN_URL = "https://nekobin.com/"
 
 
 @register(outgoing=True, pattern=r"^\.paste(?: |$)([\s\S]*)")
 async def paste(pstl):
-    """ For .paste command, pastes the text directly to dogbin. """
+    """ For .paste command, pastes the text directly to slavbin. """
     dogbin_final_url = ""
     match = pstl.pattern_match.group(1).strip()
     reply_id = pstl.reply_to_msg_id
@@ -46,7 +46,7 @@ async def paste(pstl):
         else:
             message = message.message
 
-    # Dogbin
+    # SlavBin
     await pstl.edit("`Pasting text . . .`")
     resp = post(DOGBIN_URL + "documents", data=message.encode("utf-8"))
 
@@ -60,27 +60,27 @@ async def paste(pstl):
                 "`Pasted successfully!`\n\n"
                 f"[Shortened URL]({dogbin_final_url})\n\n"
                 "`Original(non-shortened) URLs`\n"
-                f"[Dogbin URL]({DOGBIN_URL}v/{key})\n"
+                f"[SlavBin URL]({DOGBIN_URL}v/{key})\n"
                 f"[View RAW]({DOGBIN_URL}raw/{key})"
             )
         else:
             reply_text = (
                 "`Pasted successfully!`\n\n"
-                f"[Dogbin URL]({dogbin_final_url})\n"
+                f"[SlavBin URL]({dogbin_final_url})\n"
                 f"[View RAW]({DOGBIN_URL}raw/{key})"
             )
     else:
-        reply_text = "`Failed to reach Dogbin`"
+        reply_text = "`Failed to reach SlavBin`"
 
     await pstl.edit(reply_text)
 
 
 @register(outgoing=True, pattern=r"^\.getpaste(?: |$)(.*)")
 async def get_dogbin_content(dog_url):
-    """ For .getpaste command, fetches the content of a dogbin URL. """
+    """ For .getpaste command, fetches the content of a SlavBin URL. """
     textx = await dog_url.get_reply_message()
     message = dog_url.pattern_match.group(1)
-    await dog_url.edit("`Getting dogbin content...`")
+    await dog_url.edit("`Getting slavbin content...`")
 
     if textx:
         message = str(textx.message)
@@ -92,10 +92,10 @@ async def get_dogbin_content(dog_url):
         message = message[len(format_view):]
     elif message.startswith(format_normal):
         message = message[len(format_normal):]
-    elif message.startswith("del.dog/"):
-        message = message[len("del.dog/"):]
+    elif message.startswith("slav.gengkapak.my.id/"):
+        message = message[len("slav.gengkapak.my.id/"):]
     else:
-        return await dog_url.edit("`Is that even a dogbin url?`")
+        return await dog_url.edit("`Is that even a SlavBin url?`")
 
     resp = get(f"{DOGBIN_URL}raw/{message}")
 
@@ -117,7 +117,7 @@ async def get_dogbin_content(dog_url):
         return
 
     reply_text = (
-        "`Fetched dogbin URL content successfully!`"
+        "`Fetched SlavBin URL content successfully!`"
         "\n\n`Content:` " + resp.text)
 
     await dog_url.edit(reply_text)
@@ -125,7 +125,7 @@ async def get_dogbin_content(dog_url):
 
 @register(outgoing=True, pattern=r"^\.neko(?: |$)([\s\S]*)")
 async def neko(nekobin):
-    """For .paste command, pastes the text directly to dogbin."""
+    """For .paste command, pastes the text directly to nekobin."""
     nekobin_final_url = ""
     match = nekobin.pattern_match.group(1).strip()
     reply_id = nekobin.reply_to_msg_id
@@ -220,9 +220,9 @@ async def kat(katbin):
 CMD_HELP.update(
     {
         "paste": ">`.paste <text/reply>`"
-        "\nUsage: Create a paste or a shortened url using [Dogbin](https://del.dog/)"
+        "\nUsage: Create a paste or a shortened url using [Slavbin](https://slav.gengkapak.my.id/)"
         "\n\n>`.getpaste`"
-        "\nUsage: Gets the content of a paste or shortened url from [Dogbin](https://del.dog/)"
+        "\nUsage: Gets the content of a paste or shortened url from [SlavBin](https://slav.gengkapak.my.id/)"
         "\n\n>`.neko`"
         "\nUsage: Same as `.paste` but with [Nekobin](https://nekobin.com/)"
         "\n\n>`.kat`"
