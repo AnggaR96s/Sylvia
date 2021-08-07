@@ -18,7 +18,8 @@ import requests
 from bs4 import BeautifulSoup
 from humanize import naturalsize
 from js2py import EvalJs
-
+import lk21
+import cfscrape
 from userbot import CMD_HELP, USR_TOKEN
 from userbot.events import register
 from userbot.utils import humanbytes, time_formatter
@@ -78,6 +79,48 @@ async def direct_link_generator(request):
             reply += await onedrive(link)
         elif "solidfiles.com" in link:
             reply += await solid(link)
+        elif 'hxfile.co' in link:
+            reply += await hxfile(link)
+        elif 'anonfiles.com' in link:
+            reply += await anonfiles(link)
+        elif 'letsupload.io' in link:
+            reply += await letsupload(link)
+        elif 'fembed.net' in link:
+            reply += await fembed(link)
+        elif 'fembed.com' in link:
+            reply += await fembed(link)
+        elif 'femax20.com' in link:
+            reply += await fembed(link)
+        elif 'fcdn.stream' in link:
+            reply += await fembed(link)
+        elif 'feurl.com' in link:
+            reply += await fembed(link)
+        elif 'naniplay.nanime.in' in link:
+            reply += await fembed(link)
+        elif 'naniplay.nanime.biz' in link:
+            reply += await fembed(link)
+        elif 'naniplay.com' in link:
+            reply += await fembed(link)
+        elif 'layarkacaxxi.icu' in link:
+            reply += await fembed(link)
+        elif 'sbembed.com' in link:
+            reply += await sbembed(link)
+        elif 'streamsb.net' in link:
+            reply += await sbembed(link)
+        elif 'sbplay.org' in link:
+            reply += await sbembed(link)
+        elif 'pixeldrain.com' in link:
+            reply += await pixeldrain(link)
+        elif 'antfiles.com' in link:
+            reply += await antfiles(link)
+        elif 'streamtape.com' in link:
+            reply += await streamtape(link)
+        elif 'bayfiles.com' in link:
+            reply += await anonfiles(link)
+        elif 'racaty.net' in link:
+            reply += await racaty(link)
+        elif '1fichier.com' in link:
+            reply += await fichier(link)
         elif "uptobox.com" in link:
             await uptobox(request, link)
             return None
@@ -392,6 +435,193 @@ async def onedrive(link: str) -> str:
     resp2 = requests.head(dl_link)
     dl_size = humanbytes(int(resp2.headers["Content-Length"]))
     return f"[{file_name} ({dl_size})]({dl_link})"
+
+
+async def fembed(link: str) -> str:
+    """ Fembed direct link generator
+    Based on https://github.com/zevtyardt/lk21
+             https://github.com/breakdowns/slam-aria-mirror-bot """
+    bypasser = lk21.Bypass()
+    dl_url = bypasser.bypass_fembed(link)
+    reply = []
+    count = len(dl_url)
+    for i in reply:
+        reply.append(dl_url[i])
+    return reply[count - 1]
+
+
+async def sbembed(link: str) -> str:
+    """ Sbembed direct link generator
+    Based on https://github.com/zevtyardt/lk21
+             https://github.com/breakdowns/slam-aria-mirror-bot """
+    bypasser = lk21.Bypass()
+    dl_url = bypasser.bypass_sbembed(link)
+    reply = []
+    count = len(dl_url)
+    for i in dl_url:
+        reply.append(dl_url[i])
+    return reply[count - 1]
+
+
+async def hxfile(url: str) -> str:
+    """ Hxfile direct link generator
+    Based on https://github.com/zevtyardt/lk21
+             https://github.com/breakdowns/slam-aria-mirror-bot """
+    bypasser = lk21.Bypass()
+    reply = bypasser.bypass_filesIm(url)
+    return reply
+
+
+async def anonfiles(url: str) -> str:
+    """ Anonfiles direct link generator
+    Based on https://github.com/zevtyardt/lk21
+             https://github.com/breakdowns/slam-aria-mirror-bot """
+    bypasser = lk21.Bypass()
+    reply = bypasser.bypass_anonfiles(url)
+    return reply
+
+
+async def letsupload(url: str) -> str:
+    """ Letsupload direct link generator
+    Based on https://github.com/zevtyardt/lk21
+             https://github.com/breakdowns/slam-aria-mirror-bot """
+    reply = ''
+    try:
+        link = re.findall(r'\bhttps?://.*letsupload\.io\S+', url)[0]
+    except IndexError:
+        raise DirectDownloadLinkException("No Letsupload links found\n")
+    bypasser = lk21.Bypass()
+    reply = bypasser.bypass_url(link)
+    return reply
+
+
+async def pixeldrain(url: str) -> str:
+    """ Based on https://github.com/yash-dk/TorToolkit-Telegram """
+    url = url.strip("/ ")
+    file_id = url.split("/")[-1]
+    info_link = f"https://pixeldrain.com/api/file/{file_id}/info"
+    reply = f"https://pixeldrain.com/api/file/{file_id}"
+    resp = requests.get(info_link).json()
+    if resp["success"]:
+        return reply
+    else:
+        raise DirectDownloadLinkException(
+            "ERROR: Cant't download due {}.".format(
+                resp.text["value"]))
+
+
+async def antfiles(url: str) -> str:
+    """ Antfiles direct link generator
+    Based on https://github.com/zevtyardt/lk21
+             https://github.com/breakdowns/slam-aria-mirror-bot """
+    bypasser = lk21.Bypass()
+    reply = bypasser.bypass_antfiles(url)
+    return reply
+
+
+async def streamtape(url: str) -> str:
+    """ Streamtape direct link generator
+    Based on https://github.com/zevtyardt/lk21
+             https://github.com/breakdowns/slam-aria-mirror-bot """
+    bypasser = lk21.Bypass()
+    reply = bypasser.bypass_streamtape(url)
+    return reply
+
+
+async def racaty(url: str) -> str:
+    """ Racaty direct links generator
+    based on https://github.com/breakdowns/slam-aria-mirror-bot """
+    reply = ''
+    try:
+        link = re.findall(r'\bhttps?://.*racaty\.net\S+', url)[0]
+    except IndexError:
+        raise DirectDownloadLinkException("No Racaty links found\n")
+    scraper = cfscrape.create_scraper()
+    r = scraper.get(url)
+    soup = BeautifulSoup(r.text, "lxml")
+    op = soup.find("input", {"name": "op"})["value"]
+    ids = soup.find("input", {"name": "id"})["value"]
+    rpost = scraper.post(url, data={"op": op, "id": ids})
+    rsoup = BeautifulSoup(rpost.text, "lxml")
+    reply = rsoup.find("a", {"id": "uniqueExpirylink"})[
+        "href"].replace(" ", "%20")
+    return reply
+
+
+async def fichier(link: str) -> str:
+    """ 1Fichier direct links generator
+    Based on https://github.com/Maujar
+             https://github.com/breakdowns/slam-aria-mirror-bot """
+    regex = r"^([http:\/\/|https:\/\/]+)?.*1fichier\.com\/\?.+"
+    gan = re.match(regex, link)
+    if not gan:
+        raise DirectDownloadLinkException(
+            "ERROR: The link you entered is wrong!")
+    if "::" in link:
+        pswd = link.split("::")[-1]
+        url = link.split("::")[-2]
+    else:
+        pswd = None
+        url = link
+    try:
+        if pswd is None:
+            req = requests.post(url)
+        else:
+            pw = {"pass": pswd}
+            req = requests.post(url, data=pe)
+    except BaseException:
+        raise DirectDownloadLinkException(
+            "ERROR: Unable to reach 1fichier server!")
+    if req.status_code == 404:
+        raise DirectDownloadLinkException(
+            "ERROR: File not found/The link you entered is wrong!")
+    soup = BeautifulSoup(req.content, 'lxml')
+    if soup.find("a", {"class": "ok btn-general btn-orange"}) is not None:
+        reply = soup.find("a", {"class": "ok btn-general btn-orange"})["href"]
+        if reply is None:
+            raise DirectDownloadLinkException(
+                "ERROR: Unable to generate Direct Link 1fichier!")
+        else:
+            return reply
+    else:
+        if len(soup.find_all("div", {"class": "ct_warn"})) == 2:
+            str_2 = soup.find_all("div", {"class": "ct_warn"})[-1]
+            if "you must wait" in str(str_2).lower():
+                numbers = [int(word)
+                           for word in str(str_2).split() if word.isdigit()]
+                if len(numbers) == 0:
+                    raise DirectDownloadLinkException(
+                        "ERROR: 1fichier is on a limit. Please wait a few minutes/hour.")
+                else:
+                    raise DirectDownloadLinkException(
+                        f"ERROR: 1fichier is on a limit. Please wait {numbers[0]} minute.")
+            elif "protect access" in str(str_2).lower():
+                raise DirectDownloadLinkException(
+                    "ERROR: This link requires a password!\n\n<b>This link requires a password!</b>\n- Insert sign <b>::</b> after the link and write the password after the sign.\n\n<b>Example:</b>\n<code>/mirror https://1fichier.com/?smmtd8twfpm66awbqz04::love you</code>\n\n* No spaces between the signs <b>::</b>\n* For the password, you can use a space!")
+            else:
+                raise DirectDownloadLinkException(
+                    "ERROR: Error trying to generate Direct Link from 1fichier!")
+        elif len(soup.find_all("div", {"class": "ct_warn"})) == 3:
+            str_1 = soup.find_all("div", {"class": "ct_warn"})[-2]
+            str_3 = soup.find_all("div", {"class": "ct_warn"})[-1]
+            if "you must wait" in str(str_1).lower():
+                numbers = [int(word)
+                           for word in str(str_1).split() if word.isdigit()]
+                if len(numbers) == 0:
+                    raise DirectDownloadLinkException(
+                        "ERROR: 1fichier is on a limit. Please wait a few minutes/hour.")
+                else:
+                    raise DirectDownloadLinkException(
+                        f"ERROR: 1fichier is on a limit. Please wait {numbers[0]} minute.")
+            elif "bad password" in str(str_3).lower():
+                raise DirectDownloadLinkException(
+                    "ERROR: The password you entered is wrong!")
+            else:
+                raise DirectDownloadLinkException(
+                    "ERROR: Error trying to generate Direct Link from 1fichier!")
+        else:
+            raise DirectDownloadLinkException(
+                "ERROR: Error trying to generate Direct Link from 1fichier!")
 
 
 async def useragent():

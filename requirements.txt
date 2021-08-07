@@ -36,6 +36,7 @@ humanize
 jikanpy
 js2py
 justwatch
+lk21
 lottie
 lxml
 LyricsGenius
