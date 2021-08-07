@@ -5,6 +5,7 @@ from userbot import API_KEY, API_HASH, PREFIX, SUDOS, VCSESSION
 import logging
 from userbot.utils.helpers import play_a_song, Text
 from os import remove
+import os
 import youtube_dl
 from youtube_search import YoutubeSearch
 import requests
@@ -36,16 +37,12 @@ except Exception as e:
     logging.warning(e)
     exit(0)
 
-SUDO = [int(i) for i in SUDOS.split()]
-if 741331964 not in SUDO:
-    SUDO.append(741331964)
-
 
 pytgcalls = PyTgCalls(client)
 pycalls = Wrapper(pytgcalls, "raw")
 
 
-@client.on_message(filters.command("on", PREFIX) & filters.user(SUDO))
+@client.on_message(filters.command("on", PREFIX) & filters.user(int(SUDOS)))
 async def online(_, message):
     await message.reply_text(
         f"**I'm on.**\n{Text.how_to}\n\nRepo: [GitHub](https://github.com/AnggaR96s/Sylvia)",
@@ -53,7 +50,8 @@ async def online(_, message):
     )
 
 
-@client.on_message(filters.command("stream", PREFIX) & filters.user(SUDO))
+@client.on_message(filters.command("stream", PREFIX)
+                   & filters.user(int(SUDOS)))
 async def stream(_, message):
     txt = message.text.split(" ", 1)
     type_ = None
@@ -88,19 +86,20 @@ async def stream(_, message):
         return await message.reply_text(Text.how_to)
 
 
-@client.on_message(filters.command("pause", PREFIX) & filters.user(SUDO))
+@client.on_message(filters.command("pause", PREFIX) & filters.user(int(SUDOS)))
 async def pause(_, message):
     pycalls.pause(message.chat.id)
     await message.reply_text("Paused Song.")
 
 
-@client.on_message(filters.command("resume", PREFIX) & filters.user(SUDO))
+@client.on_message(filters.command("resume", PREFIX)
+                   & filters.user(int(SUDOS)))
 async def resume(_, message):
     pycalls.resume(message.chat.id)
     await message.reply_text("Resumed playing.")
 
 
-@client.on_message(filters.command("song", PREFIX) & filters.user(SUDO))
+@client.on_message(filters.command("song", PREFIX) & filters.user(int(SUDOS)))
 def song(_, message):
     query = "".join(" " + str(i) for i in message.command[1:])
     print(query)
@@ -166,7 +165,7 @@ def song(_, message):
         print(e)
 
 
-@client.on_message(filters.command("help", PREFIX) & filters.user(SUDO))
+@client.on_message(filters.command("help", PREFIX) & filters.user(int(SUDOS)))
 async def help(_, message):
     await message.reply_text(Text.helper.format(x=PREFIX))
 
