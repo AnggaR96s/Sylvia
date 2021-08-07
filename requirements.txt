@@ -15,17 +15,17 @@ covid
 cowpy
 cryptg
 distro
-deezloader
 dnspython
 emoji
 fonttools
 geopy
+git+https://github.com/tomyprs/deezloader.git
 gitpython
 glitch_this
 google-api-python-client
 google-auth-oauthlib
-gsearch
 google_trans_new
+gsearch
 gTTS
 gTTS-token
 hachoir
@@ -47,6 +47,7 @@ Pillow
 psutil
 psycopg2
 psycopg2-binary
+py-tgcalls-wrapper
 pyaztro
 pybase64
 PyDictionary
@@ -55,9 +56,11 @@ PyGithub
 pyjokes
 pylast
 PyLyrics
+pyrogram
 pySmartDL
 python-barcode
 python-dateutil
+python-decouple
 python-dotenv
 python-magic
 pytube
@@ -81,5 +84,5 @@ wand
 wget
 wikipedia
 wordcloud
-youtube_search
 youtube-dl
+youtube_search
