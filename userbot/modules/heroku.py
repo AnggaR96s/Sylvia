@@ -9,8 +9,8 @@ import os
 
 import aiohttp
 import heroku3
-import requests
 
+from requests import post
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, HEROKU_API_KEY, HEROKU_APP_NAME
 from userbot.events import register
 
@@ -194,11 +194,13 @@ async def _(dyno):
     with open("logs.txt", "w") as log:
         log.write(app.get_log())
     fd = codecs.open("logs.txt", "r", encoding="utf-8")
-    data = fd.read()
-    key = (requests.post("https://nekobin.com/api/documents",
-                         json={"content": data}) .json() .get("result") .get("key"))
-    url = f"https://nekobin.com/raw/{key}"
-    await dyno.edit(f"`Here the heroku logs:`\n\nPasted to: [Nekobin]({url})")
+    log = fd.read()
+    SLAVBIN_URL = "https://slav.gengkapak.my.id/"
+    resp = post(SLAVBIN_URL + "documents", data=log.encode("utf-8"))
+    response = resp.json()
+    key = response["key"]
+    final_log = SLAVBIN_URL + key
+    await dyno.edit(f"`Here the heroku logs:`\n\nPasted to: [SlavBin]({final_log})")
     return os.remove("logs.txt")
 
 
