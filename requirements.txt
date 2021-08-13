@@ -24,7 +24,7 @@ gitpython
 glitch_this
 google-api-python-client
 google-auth-oauthlib
-google_trans_new
+googletrans==4.0.0rc1
 gsearch
 gTTS
 gTTS-token
