@@ -14,6 +14,26 @@ from userbot.events import register
 from userbot.utils import progress
 
 
+@register(outgoing=True, pattern=r"^\.ssu(?: |$)(.*)")
+async def ssu(event):
+    url = event.pattern_match.group(1)
+    await event.edit("`Proccessing..`")
+    video = f"wget {url} -O GenerateThumb"
+    os.system(video)
+    command = f"vcsi -g 10x10 GenerateThumb -o GenerateThumb.png"
+    os.system(command)
+    await event.edit("`Uploading..`")
+    await event.client.send_file(
+        event.chat_id,
+        "GenerateThumb.png",
+        force_document=True,
+        caption=url,
+    )
+    await event.delete()
+    os.remove("GenerateThumb")
+    os.remove("GenerateThumb.png")
+
+
 @register(outgoing=True, pattern=r"^\.ssvideo(?: |$)(.*)")
 async def ssvideo(event):
     if not event.reply_to_msg_id:
