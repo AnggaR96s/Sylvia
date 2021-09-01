@@ -1,3 +1,6 @@
+from pytgcalls import StreamType
+
+
 class Text:
     how_to = "`Either reply to an audio file or give me a youtube link to play from!`"
     not_yet = "`This is not yet supported!`"

@@ -1,4 +1,4 @@
-from pyrogram import Client, filters
+from pyrogram import Client, filters, idle
 from pytgcalls import PyTgCalls
 from pytgcalls_wrapper import Wrapper
 from userbot import API_KEY, API_HASH, PREFIX, SUDOS, VCSESSION
@@ -171,4 +171,5 @@ async def help(_, message):
 
 
 logging.info("Started the bot.")
-pytgcalls.run()
+pytgcalls.start()
+idle()
