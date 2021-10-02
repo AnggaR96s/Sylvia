@@ -246,11 +246,6 @@ time.tzset()
 # Uptobox
 USR_TOKEN = os.environ.get("USR_TOKEN_UPTOBOX", None)
 
-# VC
-VCSESSION = os.environ.get("VCSESSION", None)
-SUDOS = os.environ.get("SUDOS", None)
-PREFIX = os.environ.get("PREFIX", None)
-
 # Bot version
 BOT_VERSION = "DCLXVI-Slav01"
 
