@@ -17,6 +17,7 @@
 #  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 import asyncio
 import errno
 import json
@@ -33,7 +34,9 @@ from pySmartDL import SmartDL
 
 from userbot import CMD_HELP, LOGS, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
+from userbot.modules.google_drive import create_app, get_mimeType, upload
 from userbot.utils import humanbytes, time_formatter
+from userbot.utils.exceptions import CancelProcess
 
 
 async def subprocess_run(megadl, cmd):
@@ -91,6 +94,7 @@ async def mega_downloader(megadl):
     temp_file_name = file_name + ".temp"
     temp_file_path = TEMP_DOWNLOAD_DIRECTORY + temp_file_name
     file_path = TEMP_DOWNLOAD_DIRECTORY + file_name
+
     if os.path.isfile(file_path):
         try:
             raise FileExistsError(
@@ -114,10 +118,10 @@ async def mega_downloader(megadl):
         percentage = int(downloader.get_progress() * 100)
         speed = downloader.get_speed(human=True)
         estimated_total_time = round(downloader.get_eta())
-        progress_str = "`{0}` | [{1}{2}] `{3}%`".format(
+        progress_str = "`{}` | [{}{}] `{}%`".format(
             status,
-            "".join("●" for i in range(math.floor(percentage / 10))),
-            "".join("○" for i in range(10 - math.floor(percentage / 10))),
+            "".join(["●" for i in range(math.floor(percentage / 10))]),
+            "".join(["○" for i in range(10 - math.floor(percentage / 10))]),
             round(percentage, 2),
         )
         diff = time.time() - start
@@ -161,10 +165,33 @@ async def mega_downloader(megadl):
         else:
             await megadl.edit(
                 f"`{file_name}`\n\n"
-                f"Successfully downloaded in: `{file_path}`.\n\n"
-                f"Download took: {time_formatter(download_time)}."
+                f"Successfully downloaded in: `{file_path}`.\n"
+                f"Download took: {time_formatter(download_time)}.",
             )
-            return None
+
+        msg = await megadl.respond("`Uploading to GDrive...`")
+        service = await create_app(msg)
+        if service is False:
+            await asyncio.sleep(2.5)
+            await msg.delete()
+            return
+        mime_type = await get_mimeType(file_path)
+
+        try:
+            resultgd = await upload(msg, service, file_path, file_name, mime_type)
+        except CancelProcess:
+            msg.edit(
+                "`[FILE - CANCELLED]`\n\n"
+                "`Status` : **OK** - received signal cancelled."
+            )
+        if resultgd:
+            result_output = f"**GDrive Upload**\n\n📄 [{file_name}]({resultgd[1]})"
+            result_output += f"\n__Size : {humanbytes(resultgd[0])}__"
+            await msg.edit(
+                result_output,
+                link_preview=False,
+            )
+
     else:
         await megadl.edit(
             "`Failed to download, " "check heroku Logs for more details.`"
