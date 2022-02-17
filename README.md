@@ -40,7 +40,7 @@ It has since evolved, becoming extremely modular and simple to use.
 ## Generate String Session
 
 Run on Repl.it:
-<p><a href="http://dclxvi.anggar96s.repl.run"> <img src="https://img.shields.io/badge/run-string__session.py-blue?style=for-the-badge&logo=repl.it" alt="Generate String Session" /></a></p>
+<p><a href="http://telethonsessiongenerator.anggar96s.repl.run"> <img src="https://img.shields.io/badge/run-string__session.py-blue?style=for-the-badge&logo=repl.it" alt="Generate String Session" /></a></p>
 
 ## How do I use it?
 
