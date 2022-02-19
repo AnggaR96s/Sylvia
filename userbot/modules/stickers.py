@@ -4,12 +4,15 @@
 # you may not use this file except in compliance with the License.
 #
 """ Userbot module for kanging stickers or making new ones. Thanks @rupansh"""
+import os
 import io
 import math
 import random
 import urllib.request
 from os import remove
-
+import asyncio
+import shlex
+from typing import Tuple
 import requests
 from bs4 import BeautifulSoup as bs
 from PIL import Image
@@ -21,8 +24,38 @@ from telethon.tl.types import (
     MessageMediaPhoto,
 )
 
-from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot
+from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
+
+
+async def animator(media, mainevent, textevent):
+    h = media.file.height
+    w = media.file.width
+    w, h = (-1, 512) if h > w else (512, -1)
+    if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
+        os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
+    temp = await mainevent.client.download_media(media, TEMP_DOWNLOAD_DIRECTORY)
+    await textevent.edit("🎞Converting into Animated sticker..")
+    await runcmd(
+        f"ffmpeg -ss 00:00:00 -to 00:00:02.900 -i {temp} -vf scale={w}:{h} -c:v libvpx-vp9 -crf 30 -b:v 560k -maxrate 560k -bufsize 256k -an Video.webm"
+    )
+    os.remove(temp)
+    vid = "Video.webm"
+    return vid
+
+
+async def runcmd(cmd: str) -> Tuple[str, str, int, int]:
+    args = shlex.split(cmd)
+    process = await asyncio.create_subprocess_exec(
+        *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+    )
+    stdout, stderr = await process.communicate()
+    return (
+        stdout.decode("utf-8", "replace").strip(),
+        stderr.decode("utf-8", "replace").strip(),
+        process.returncode,
+        process.pid,
+    )
 
 KANGING_STR = [
     "Using Witchery to kang this sticker...",
@@ -40,7 +73,7 @@ KANGING_STR = [
 COMBOT = "https://combot.org/telegram/stickers?q="
 
 
-@register(pattern=r"\.pack (s|a) (.*)", outgoing=True)
+@register(pattern=r"\.pack (s|v|a) (.*)", outgoing=True)
 async def lang(value):
     util = value.pattern_match.group(1)
     try:
@@ -54,6 +87,13 @@ async def lang(value):
         if gvarstatus("STPACK"):
             delgvar("STPACK")
         addgvar("STPACK", arg)
+        pn = arg
+    if util == "v":
+        ps = "Video"
+        arg = value.pattern_match.group(2)
+        if gvarstatus("VIPACK"):
+            delgvar("VIPACK")
+        addgvar("VIPACK", arg)
         pn = arg
     elif util == "a":
         ps = "Animation"
@@ -79,6 +119,7 @@ async def kang(args):
     photo = None
     emojibypass = False
     is_anim = False
+    is_video = False
     emoji = None
 
     if message and message.media:
@@ -108,6 +149,20 @@ async def kang(args):
 
             emojibypass = True
             is_anim = True
+            photo = 1
+        elif message.media.document.mime_type in ["video/mp4", "video/webm"]:
+            if message.media.document.mime_type == "video/webm":
+                event = await args.edit(f"`{random.choice(KANGING_STR)}`")
+                vid = await bot.download_media(
+                    message.media.document, "Video.webm"
+                )
+            else:
+                event = await args.edit("⌛ Downloading..")
+                await animator(message, args, event)
+                await event.edit(f"`{random.choice(KANGING_STR)}`")
+            is_video = True
+            emoji = "😂"
+            emojibypass = True
             photo = 1
         else:
             return await args.edit("`Unsupported File!`")
@@ -147,14 +202,18 @@ async def kang(args):
         cmd = "/newpack"
         file = io.BytesIO()
 
-        if not is_anim:
-            image = await resize_photo(photo)
-            file.name = "sticker.png"
-            image.save(file, "PNG")
-        else:
+        if is_video:
+            packname += "_vid"
+            packnick += " (Video)"
+            cmd = "/newvideo"
+        elif is_anim:
             packname += "_anim"
             packnick += " (Animated)"
             cmd = "/newanimated"
+        else:
+            image = await resize_photo(photo)
+            file.name = "sticker.png"
+            image.save(file, "PNG")
 
         response = urllib.request.urlopen(
             urllib.request.Request(f"http://t.me/addstickers/{packname}")
@@ -204,6 +263,9 @@ async def kang(args):
                         if is_anim:
                             await conv.send_file("AnimatedSticker.tgs")
                             remove("AnimatedSticker.tgs")
+                        elif is_video:
+                            await conv.send_file("Video.webm")
+                            remove("Video.webm")
                         else:
                             file.seek(0)
                             await conv.send_file(file, force_document=True)
@@ -238,6 +300,9 @@ async def kang(args):
                 if is_anim:
                     await conv.send_file("AnimatedSticker.tgs")
                     remove("AnimatedSticker.tgs")
+                elif is_video:
+                    await conv.send_file("Video.webm")
+                    remove("Video.webm")
                 else:
                     file.seek(0)
                     await conv.send_file(file, force_document=True)
@@ -268,6 +333,9 @@ async def kang(args):
                 if is_anim:
                     await conv.send_file("AnimatedSticker.tgs")
                     remove("AnimatedSticker.tgs")
+                elif is_video:
+                    await conv.send_file("Video.webm")
+                    remove("Video.webm")
                 else:
                     file.seek(0)
                     await conv.send_file(file, force_document=True)
