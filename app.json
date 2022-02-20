@@ -206,6 +206,10 @@
     "WOLFRAM_ID": {
       "description": "Get an API KEY from products.wolframalpha.com/api/",
       "required": false
+    },
+    "PACKNAME": {
+      "description": "Custom sticker pack name",
+      "required": false
     }
   },
   "formation": {

@@ -24,7 +24,7 @@ from telethon.tl.types import (
     MessageMediaPhoto,
 )
 
-from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot, TEMP_DOWNLOAD_DIRECTORY
+from userbot import CMD_HELP, NAMEPACK, TEMP_DOWNLOAD_DIRECTORY, bot
 from userbot.events import register
 
 
@@ -35,7 +35,7 @@ async def animator(media, mainevent, textevent):
     if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
         os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
     temp = await mainevent.client.download_media(media, TEMP_DOWNLOAD_DIRECTORY)
-    await textevent.edit("🎞Converting into Animated sticker..")
+    await textevent.edit("🎞 Converting into Animated sticker..")
     await runcmd(
         f"ffmpeg -ss 00:00:00 -to 00:00:02.900 -i {temp} -vf scale={w}:{h} -c:v libvpx-vp9 -crf 30 -b:v 560k -maxrate 560k -bufsize 256k -an Video.webm"
     )
@@ -71,42 +71,6 @@ KANGING_STR = [
 ]
 
 COMBOT = "https://combot.org/telegram/stickers?q="
-
-
-@register(pattern=r"\.pack (s|v|a) (.*)", outgoing=True)
-async def lang(value):
-    util = value.pattern_match.group(1)
-    try:
-        from userbot.modules.sql_helper.globals import gvarstatus, addgvar, delgvar
-    except AttributeError:
-        return await lang.edit("**Running on Non-SQL mode!**")
-
-    if util == "s":
-        ps = "Sticker"
-        arg = value.pattern_match.group(2)
-        if gvarstatus("STPACK"):
-            delgvar("STPACK")
-        addgvar("STPACK", arg)
-        pn = arg
-    if util == "v":
-        ps = "Video"
-        arg = value.pattern_match.group(2)
-        if gvarstatus("VIPACK"):
-            delgvar("VIPACK")
-        addgvar("VIPACK", arg)
-        pn = arg
-    elif util == "a":
-        ps = "Animation"
-        arg = value.pattern_match.group(2)
-        if gvarstatus("ANPACK"):
-            delgvar("ANPACK")
-        addgvar("ANPACK", arg)
-        pn = arg
-    await value.edit(f"**Kang Pack for {ps} changed to {pn.title()}.**")
-    if BOTLOG:
-        await value.client.send_message(
-            BOTLOG_CHATID,
-            f"`Kang Pack for {ps} changed to {pn.title()}.`")
 
 
 @register(outgoing=True, pattern=r"^\.kang")
@@ -161,7 +125,7 @@ async def kang(args):
                 await animator(message, args, event)
                 await event.edit(f"`{random.choice(KANGING_STR)}`")
             is_video = True
-            emoji = "😂"
+            emoji = "🤔"
             emojibypass = True
             photo = 1
         else:
@@ -186,19 +150,13 @@ async def kang(args):
                 # User sent just custom emote, wants to push to default
                 # pack
                 emoji = splat[1]
-
-        try:
-            from userbot.modules.sql_helper.globals import gvarstatus
-        except AttributeError:
-            return await query.edit("**Running on Non-SQL mode!**")
-
-        if gvarstatus("STPACK") is not None:
-            cust = str(gvarstatus("STPACK"))
-            packname = f"a{user.id}_by_{cust}_{pack}"
-            packnick = f"{cust}'s kang pack Vol.{pack}"
+        if NAMEPACK is not None:
+            packname = f"a{user.id}_by_{NAMEPACK}_{pack}"
+            packnick = f"{NAMEPACK}'s kang pack Vol.{pack}"
         else:
             packname = f"a{user.id}_by_{user.username}_{pack}"
             packnick = f"@{user.username}'s kang pack Vol.{pack}"
+
         cmd = "/newpack"
         file = io.BytesIO()
 
@@ -231,16 +189,12 @@ async def kang(args):
                 await bot.send_read_acknowledge(conv.chat_id)
                 await conv.send_message(packname)
                 x = await conv.get_response()
-                while "120" in x.text:
+                limit = "50" if (is_anim or is_video) else "120"
+                while limit in x.text:
                     pack += 1
-                    try:
-                        from userbot.modules.sql_helper.globals import gvarstatus
-                    except AttributeError:
-                        return await query.edit("**Running on Non-SQL mode!**")
-                    if gvarstatus("ANPACK") is not None:
-                        cuan = str(gvarstatus("ANPACK"))
-                        packname = f"a{user.id}_by_{cuan}_{pack}"
-                        packnick = f"{cuan}'s kang pack Vol.{pack}"
+                    if NAMEPACK is not None:
+                        packname = f"a{user.id}_by_{NAMEPACK}_{pack}"
+                        packnick = f"{NAMEPACK}'s kang pack Vol.{pack}"
                     else:
                         packname = f"a{user.id}_by_{user.username}_{pack}"
                         packnick = f"@{user.username}'s kang pack Vol.{pack}"
@@ -502,8 +456,6 @@ CMD_HELP.update(
         "\n\n>`.kang (emoji['s]]?` [number]?"
         "\nUsage: Kang's the sticker/image to the specified pack but uses 🤔 as emoji "
         "or choose the emoji you want to."
-        "\n\n>`.pack s or a <name>`"
-        "\nUsage: Change (s)ticker or (a)nimated  kang pack."
         "\n\n>`.stkrinfo`"
         "\nUsage: Gets info about the sticker pack."
         "\n\n>`.get`"

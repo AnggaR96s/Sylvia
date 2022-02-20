@@ -246,6 +246,9 @@ time.tzset()
 # Uptobox
 USR_TOKEN = os.environ.get("USR_TOKEN_UPTOBOX", None)
 
+# Kang pack name
+NAMEPACK = os.environ.get("NAMEPACK", None)
+
 # Bot version
 BOT_VERSION = "DCLXVI-Slav01"
 
