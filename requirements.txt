@@ -14,12 +14,12 @@ colour
 covid
 cowpy
 cryptg
+deezloader==2021.9.22
 distro
 dnspython
 emoji
 fonttools
 geopy
-git+https://github.com/tomyprs/deezloader.git
 gitpython
 glitch_this
 google-api-python-client
