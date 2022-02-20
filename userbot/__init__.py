@@ -353,7 +353,7 @@ with bot:
         async def handler(event):
             if event.message.sender_id != uid:
                 await event.reply(
-                    f"DCLXVI UserBot by `@NGGDCLXVI`! (`@{me.username}`) I am here to help you."
+                    f"Sylvia UserBot by `@MaximumSlav`! (`@{me.username}`) I am here to help you."
                 )
             else:
                 await event.reply("`I work for you :) I love you. ❤️`")
@@ -368,7 +368,7 @@ with bot:
                 result = builder.article(
                     "Please Use Only With .help Command",
                     text="{}\nTotal loaded modules: {}".format(
-                        "DCLXVI UserBot by @GengKapak\n\nGitHub Repository [Here](https://github.com/GengKapak/DCLXVI)\n",
+                        "Sylvia UserBot by @MaximumSlav\n\nGitHub Repository [Here](https://github.com/AnggaR96s/Sylvia)\n",
                         len(dugmeler),
                     ),
                     buttons=buttons,
@@ -392,12 +392,12 @@ You can convert your account to bot and use them. Remember, you can't manage som
                                 "https://t.me/GengKapak"),
                             custom.Button.url(
                                 "Build by",
-                                "https://t.me/NGGDCLXVI"),
+                                "https://t.me/MaximumSlav"),
                         ],
                         [
                             custom.Button.url(
                                 "GitHub",
-                                "https://github.com/GengKapak/DCLXVI")],
+                                "https://github.com/AnggaR96s/Sylvia")],
                     ],
                     link_preview=False,
                 )
