@@ -304,7 +304,13 @@ if HEROKU_APP_NAME is not None and HEROKU_API_KEY is not None:
 # 'bot' variable
 if STRING_SESSION:
     # pylint: disable=invalid-name
-    bot = TelegramClient(StringSession(STRING_SESSION), API_KEY, API_HASH)
+    bot = TelegramClient(
+        StringSession(STRING_SESSION),
+        API_KEY,
+        API_HASH,
+        connection=ConnectionTcpAbridged,
+        auto_reconnect=True,
+    )
 else:
     # pylint: disable=invalid-name
     bot = TelegramClient("userbot", API_KEY, API_HASH)
