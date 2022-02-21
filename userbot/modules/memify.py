@@ -147,7 +147,7 @@ async def runcmd(cmd: str) -> Tuple[str, str, int, int]:
 @register(outgoing=True, pattern=r"^\.(mmf|mms) ?(.*)")
 async def memes(cat):
     cmd = cat.pattern_match.group(1)
-    catinput = cat.pattern_match.group(2)
+    catinput = cat.pattern_match.group(2).upper()
     reply = await cat.get_reply_message()
     catid = cat.reply_to_msg_id
     if not (reply and (reply.media)):
