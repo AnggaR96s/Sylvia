@@ -21,6 +21,7 @@ from requests import get
 from telethon.sessions import StringSession
 from telethon.sync import TelegramClient, custom, events
 from telethon.tl.functions.channels import JoinChannelRequest
+from telethon.network.connection.tcpabridged import ConnectionTcpAbridged
 
 load_dotenv("config.env")
 
