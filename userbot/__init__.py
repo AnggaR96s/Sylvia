@@ -232,9 +232,6 @@ HEADER = os.environ.get("HEADER", "Userbot is alive with status:")
 # Jokes alive
 JOKES = os.environ.get("JOKES", None)
 
-# Deezloader
-DEEZER_ARL_TOKEN = os.environ.get("DEEZER_ARL_TOKEN", None)
-
 # Image for alive
 IMG = os.environ.get(
     "IMG",

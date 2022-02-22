@@ -14,7 +14,6 @@ colour
 covid
 cowpy
 cryptg
-deezloader==2021.9.22
 distro
 dnspython
 emoji
