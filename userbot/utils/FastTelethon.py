@@ -7,7 +7,7 @@ import logging
 import math
 import os
 from collections import defaultdict
-from typing import AsyncGenerator, Awaitable, BinaryIO, DefaultDict, Union
+from typing import AsyncGenerator, Awaitable, BinaryIO, DefaultDict, Optional, Union
 
 from telethon import TelegramClient, helpers, utils
 from telethon.crypto import AuthKey
@@ -75,7 +75,7 @@ class DownloadSender:
         self.stride = stride
         self.remaining = count
 
-    async def next(self) -> bytes | None:
+    async def next(self) -> Optional[bytes]:
         if not self.remaining:
             return None
         result = await self.client._call(self.sender, self.request)
@@ -90,10 +90,10 @@ class DownloadSender:
 class UploadSender:
     client: TelegramClient
     sender: MTProtoSender
-    request: SaveFilePartRequest | SaveBigFilePartRequest
+    request: Union[SaveFilePartRequest, SaveBigFilePartRequest]
     part_count: int
     stride: int
-    previous: asyncio.Task | None
+    previous: Optional[asyncio.Task]
     loop: asyncio.AbstractEventLoop
 
     def __init__(
@@ -143,14 +143,14 @@ class ParallelTransferrer:
     client: TelegramClient
     loop: asyncio.AbstractEventLoop
     dc_id: int
-    senders: list[DownloadSender | UploadSender] | None
+    senders: Optional[list[Union[DownloadSender, UploadSender]]]
     auth_key: AuthKey
     upload_ticker: int
 
     def __init__(
             self,
             client: TelegramClient,
-            dc_id: int | None = None) -> None:
+            dc_id: Optional[int] = None) -> None:
         self.client = client
         self.loop = self.client.loop
         self.dc_id = dc_id or self.client.session.dc_id
@@ -274,8 +274,8 @@ class ParallelTransferrer:
         self,
         file_id: int,
         file_size: int,
-        part_size_kb: float | None = None,
-        connection_count: int | None = None,
+        part_size_kb: Optional[float] = None,
+        connection_count: Optional[int] = None,
     ) -> tuple[int, int, bool]:
         connection_count = connection_count or self._get_connection_count(
             file_size)
@@ -297,8 +297,8 @@ class ParallelTransferrer:
         self,
         file: TypeLocation,
         file_size: int,
-        part_size_kb: float | None = None,
-        connection_count: int | None = None,
+        part_size_kb: Optional[float] = None,
+        connection_count: Optional[int] = None,
     ) -> AsyncGenerator[bytes, None]:
         connection_count = connection_count or self._get_connection_count(
             file_size)
@@ -405,7 +405,7 @@ async def download_file(
 async def upload_file(
     client: TelegramClient,
     file: BinaryIO,
-    name,
+    name: str,
     progress_callback: callable = None,
 ) -> TypeInputFile:
     global filename
