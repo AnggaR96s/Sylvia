@@ -18,6 +18,7 @@ distro
 dnspython
 emoji
 fonttools
+fake-headers
 geopy
 gitpython
 glitch_this
