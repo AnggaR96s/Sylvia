@@ -20,7 +20,7 @@ if GENIUS is not None:
 async def lyrics(lyric):
     await lyric.edit("`Getting information...`")
     if GENIUS is None:
-        await lyric.edit("`Provide genius access token to Heroku ConfigVars...`")
+        await lyric.edit("`Provide genius access token to ConfigVars...`")
         return False
     if lyric.pattern_match.group(1) == "now":
         playing = User(LASTFM_USERNAME, lastfm).get_now_playing()

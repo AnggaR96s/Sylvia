@@ -110,10 +110,6 @@ LOGSPAMMER = sb(os.environ.get("LOGSPAMMER", "False"))
 # Bleep Blop, this is a bot ;)
 PM_AUTO_BAN = sb(os.environ.get("PM_AUTO_BAN", "False"))
 
-# Heroku Credentials for updater.
-HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", None)
-HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY", None)
-
 # Custom (forked) repo URL for updater.
 UPSTREAM_REPO_URL = os.environ.get(
     "UPSTREAM_REPO_URL", "https://github.com/AnggaR96s/Sylvia.git"
@@ -286,10 +282,6 @@ def migration_workaround():
     delgvar("public_ip")
     addgvar("public_ip", new_ip)
     return None
-
-
-if HEROKU_APP_NAME is not None and HEROKU_API_KEY is not None:
-    migration_workaround()
 
 
 # 'bot' variable
