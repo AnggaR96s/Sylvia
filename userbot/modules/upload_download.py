@@ -14,7 +14,7 @@ import math
 import os
 import subprocess
 import time
-
+from datetime import datetime
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from pySmartDL import SmartDL
@@ -23,6 +23,8 @@ from telethon.tl.types import DocumentAttributeVideo
 from userbot import CMD_HELP, LOGS, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
 from userbot.utils import humanbytes, progress
+from telethon.tl.types import DocumentAttributeVideo
+from userbot.utils.FastTelethon import download_file
 
 
 @register(pattern=r"^\.download(?: |$)(.*)", outgoing=True)
@@ -30,6 +32,7 @@ async def download(target_file):
     """ For .download command, download files to the userbot's server. """
     await target_file.edit("Processing ...")
     input_str = target_file.pattern_match.group(1)
+    replied = await target_file.get_reply_message()
     if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
         os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
     if "|" in input_str:
@@ -86,22 +89,57 @@ async def download(target_file):
             )
         else:
             await target_file.edit("Incorrect URL\n{}".format(url))
-    elif target_file.reply_to_msg_id:
+    elif replied:
+        if not replied.media:
+            return await target_file.edit("`Reply to file or media`")
         try:
-            c_time = time.time()
-            downloaded_file_name = await target_file.client.download_media(
-                await target_file.get_reply_message(),
-                TEMP_DOWNLOAD_DIRECTORY,
-                progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-                    progress(d, t, target_file, c_time, "[DOWNLOAD]")
-                ),
-            )
-        except Exception as e:  # pylint:disable=C0103,W0703
+            media = replied.media
+            if hasattr(media, "document"):
+                file = media.document
+                mime_type = file.mime_type
+                filename = replied.file.name
+                if not filename:
+                    if "audio" in mime_type:
+                        filename = (
+                            "audio_" +
+                            datetime.now().isoformat(
+                                "_",
+                                "seconds") +
+                            ".ogg")
+                    elif "video" in mime_type:
+                        filename = (
+                            "video_" +
+                            datetime.now().isoformat(
+                                "_",
+                                "seconds") +
+                            ".mp4")
+                outdir = TEMP_DOWNLOAD_DIRECTORY + filename
+                c_time = time.time()
+                start_time = datetime.now()
+                with open(outdir, "wb") as f:
+                    result = await download_file(
+                        client=target_file.client,
+                        location=file,
+                        out=f,
+                        progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
+                            progress(d, t, target_file, c_time, "[DOWNLOAD]", input_str)
+                        ),
+                    )
+            else:
+                start_time = datetime.now()
+                result = await target_file.client.download_media(
+                    media, TEMP_DOWNLOAD_DIRECTORY
+                )
+            dl_time = (datetime.now() - start_time).seconds
+        except Exception as e:
             await target_file.edit(str(e))
         else:
-            await target_file.edit(
-                "Downloaded to `{}` successfully !!".format(downloaded_file_name)
-            )
+            try:
+                await target_file.edit("Downloaded to `{}` successfully !!".format(result.name, dl_time)
+                                       )
+            except AttributeError:
+                await target_file.edit("Downloaded to `{}` successfully !!".format(result, dl_time)
+                                       )
     else:
         await target_file.edit("Reply to a message to download to my local server.")
 
