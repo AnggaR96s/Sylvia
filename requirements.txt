@@ -15,7 +15,7 @@ cowpy
 cryptg
 distro
 dnspython
-emoji
+emoji==1.7.0
 fonttools
 fake-headers
 geopy
