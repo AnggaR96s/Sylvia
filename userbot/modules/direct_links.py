@@ -26,6 +26,7 @@ import cfscrape
 from userbot import CMD_HELP, USR_TOKEN
 from userbot.events import register
 from userbot.utils import humanbytes, time_formatter
+from userbot.utils.exceptions import DirectDownloadLinkException
 
 
 async def subprocess_run(cmd):
