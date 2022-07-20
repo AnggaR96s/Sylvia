@@ -7,6 +7,8 @@
 import asyncio
 import json
 import re
+from re import findall as re_findall, search as re_search
+from requests import get as rget
 import urllib.parse
 from asyncio import create_subprocess_shell as asyncSubprocess
 from asyncio.subprocess import PIPE as asyncPIPE
@@ -19,7 +21,6 @@ import requests
 from bs4 import BeautifulSoup
 from fake_headers import Headers
 from humanize import naturalsize
-from js2py import EvalJs
 import lk21
 import cfscrape
 from userbot import CMD_HELP, USR_TOKEN
@@ -133,28 +134,24 @@ async def direct_link_generator(request):
 
 
 async def zippy_share(url: str) -> str:
-    link = re.findall("https:/.(.*?).zippyshare", url)[0]
-    response_content = (requests.get(url)).content
-    bs_obj = BeautifulSoup(response_content, "lxml")
-
     try:
-        js_script = bs_obj.find("div", {"class": "center", }).find_all(
-            "script"
-        )[1]
-    except BaseException:
-        js_script = bs_obj.find("div", {"class": "right", }).find_all(
-            "script"
-        )[0]
-
-    js_content = re.findall(r'\.href.=."/(.*?)";', str(js_script))
-    js_content = 'var x = "/' + js_content[0] + '"'
-
-    evaljs = EvalJs()
-    setattr(evaljs, "x", None)
-    evaljs.execute(js_content)
-    js_content = getattr(evaljs, "x")
-
-    return f"https://{link}.zippyshare.com{js_content}"
+        link = re_findall(r'\bhttps?://.*zippyshare\.com\S+', url)[0]
+    except IndexError:
+        raise DirectDownloadLinkException("ERROR: No Zippyshare links found")
+    try:
+        base_url = re_search('http.+.zippyshare.com/', link).group()
+        response = rget(link).content
+        pages = BeautifulSoup(response, "lxml")
+        js_script = pages.find(
+            "div",
+            style="margin-left: 24px; margin-top: 20px; text-align: center; width: 303px; height: 105px;")
+        js_content = re_findall(r'\.href.=."/(.*?)";', str(js_script))[0]
+        js_content = str(js_content).split('"')
+        a = str(js_script).split('var a = ')[1].split(';')[0]
+        value = int(a) ** 3 + 3
+        return base_url + js_content[0] + str(value) + js_content[2]
+    except IndexError:
+        raise DirectDownloadLinkException("ERROR: Can't find download button")
 
 
 async def yandex_disk(url: str) -> str:
