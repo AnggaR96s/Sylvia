@@ -1,4 +1,4 @@
-FROM gengkapak/jammy:userbot
+FROM gengkapak/kinetic:userbot
 
 #
 # Clone repo and prepare working directory
