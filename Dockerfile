@@ -1,4 +1,4 @@
-FROM gengkapak/kinetic:userbot
+FROM gengkapak/noc
 
 #
 # Clone repo and prepare working directory

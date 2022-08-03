@@ -19,7 +19,7 @@ from hachoir.parser import createParser
 import wikipedia
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
-from emoji import get_emoji_regexp
+from emoji import replace_emoji
 from googletrans import LANGUAGES, Translator
 from gtts import gTTS
 from gtts.lang import tts_langs
@@ -416,7 +416,8 @@ async def translateme(trans):
         target_lang = "id"
 
     try:
-        reply_text = translator.translate(deEmojify(message), dest=target_lang)
+        reply_text = translator.translate(
+            replace_emoji(message), dest=target_lang)
     except ValueError:
         return await trans.edit(
             "**Invalid language selected, use **`.lang trt <language code>`**.**"
@@ -614,6 +615,7 @@ async def download_video(v_url):
             ),
             "quiet": True,
             "logtostderr": False,
+            "ffmpeg_location": "/bin/noc",
         }
         audio = True
     elif "video" in dl_type:
@@ -634,6 +636,7 @@ async def download_video(v_url):
             ),
             "logtostderr": False,
             "quiet": True,
+            "ffmpeg_location": "/bin/noc",
         }
         video = True
 
@@ -784,11 +787,6 @@ async def wolfram(wvent):
         await wvent.client.send_message(
             BOTLOG_CHATID, f".wolfram {i} was executed successfully"
         )
-
-
-def deEmojify(inputString):
-    """ Remove emojis and other non-safe characters from string """
-    return get_emoji_regexp().sub("", inputString)
 
 
 CMD_HELP.update(

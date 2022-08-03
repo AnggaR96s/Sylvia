@@ -37,7 +37,7 @@ async def animator(media, mainevent, textevent):
     temp = await mainevent.client.download_media(media, TEMP_DOWNLOAD_DIRECTORY)
     await textevent.edit("🎞 Converting into Animated sticker..")
     await runcmd(
-        f"ffmpeg -ss 00:00:00 -to 00:00:02.900 -i {temp} -vf scale={w}:{h} -c:v libvpx-vp9 -crf 30 -b:v 560k -maxrate 560k -bufsize 256k -an Video.webm"
+        f"noc -ss 00:00:00 -to 00:00:02.900 -i {temp} -vf scale={w}:{h} -c:v libvpx-vp9 -crf 30 -b:v 560k -maxrate 560k -bufsize 256k -an Video.webm"
     )
     os.remove(temp)
     vid = "Video.webm"
