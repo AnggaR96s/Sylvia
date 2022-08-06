@@ -1,4 +1,4 @@
-FROM gengkapak/noc
+FROM gengkapak/app:latest
 
 #
 # Clone repo and prepare working directory
