@@ -23,8 +23,9 @@ from emoji import replace_emoji
 from googletrans import LANGUAGES, Translator
 from gtts import gTTS
 from gtts.lang import tts_langs
-from requests import get
 from search_engine_parser import YahooSearch as GoogleSearch
+from search_engine_parser import BingSearch, GoogleSearch, YahooSearch
+from search_engine_parser.core.exceptions import NoResultsOrTrafficError
 from telethon.tl.types import DocumentAttributeAudio, DocumentAttributeVideo
 from urbandict import define
 from wikipedia import summary
@@ -168,38 +169,57 @@ async def moni(event):
         return await event.edit("`Invalid syntax.`")
 
 
-@register(outgoing=True, pattern=r"^\.google (.*)")
+@register(outgoing=True, disable_errors=True, pattern=r"^\.google ([\s\S]*)")
 async def gsearch(q_event):
-    """ For .google command, do a Google search. """
+    "Google search command."
+    await q_event.edit("`Searching..`")
     match = q_event.pattern_match.group(1)
-    page = findall(r"page=\d+", match)
+    page = re.findall(r"-p\d+", match)
+    lim = re.findall(r"-l\d+", match)
     try:
         page = page[0]
-        page = page.replace("page=", "")
-        match = match.replace("page=" + page[0], "")
+        page = page.replace("-p", "")
+        match = match.replace(f"-p{page}", "")
     except IndexError:
         page = 1
-    search_args = (str(match), int(page))
+    try:
+        lim = lim[0]
+        lim = lim.replace("-l", "")
+        match = match.replace(f"-l{lim}", "")
+        lim = int(lim)
+        if lim <= 0:
+            lim = 5
+    except IndexError:
+        lim = 5
+    smatch = match.replace(" ", "+")
+    search_args = str(smatch), page
     gsearch = GoogleSearch()
-    gresults = await gsearch.async_search(*search_args)
+    bsearch = BingSearch()
+    ysearch = YahooSearch()
+    try:
+        gresults = await gsearch.async_search(*search_args)
+    except NoResultsOrTrafficError:
+        try:
+            gresults = await bsearch.async_search(*search_args)
+        except NoResultsOrTrafficError:
+            try:
+                gresults = await ysearch.async_search(*search_args)
+            except Exception as e:
+                return await q_event.edit(f"**Error:**\n`{e}`", time=10)
     msg = ""
-    for i in range(10):
+    for i in range(lim):
+        if i > len(gresults["links"]):
+            break
         try:
             title = gresults["titles"][i]
             link = gresults["links"][i]
             desc = gresults["descriptions"][i]
-            msg += f"[{title}]({link})\n`{desc}`\n\n"
+            msg += f"🔎[{title}]({link})\n`{desc}`\n\n"
         except IndexError:
             break
     await q_event.edit(
         "**Search Query:**\n`" + match + "`\n\n**Results:**\n" + msg, link_preview=False
     )
-
-    if BOTLOG:
-        await q_event.client.send_message(
-            BOTLOG_CHATID,
-            "Google Search query `" + match + "` was executed successfully",
-        )
 
 
 @register(outgoing=True, pattern=r"^\.wklang (.*)")
