@@ -5,10 +5,8 @@
 #
 """ Userbot module containing commands related to the \
     Information Superhighway (yes, Internet). """
-import os
 from datetime import datetime
 
-import wget
 from speedtest import Speedtest
 from telethon import functions
 
@@ -27,7 +25,7 @@ async def speedtst(spd):
     test.upload()
     test.results.share()
     result = test.results.dict()
-    path = wget.download(result["share"])
+    path = result["share"]
     now = datetime.now()
     time = now.strftime("%H:%M:%S")
     output = f"Started at `{time}`\n\n"
@@ -46,7 +44,6 @@ async def speedtst(spd):
     output += f"Upload: `{humanbytes(result['upload'] / 8)}/s`"
     await spd.delete()
     await spd.client.send_file(spd.chat_id, path, caption=output, force_document=False)
-    os.remove(path)
 
 
 def humanbytes(size: float) -> str:
