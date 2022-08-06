@@ -16,6 +16,7 @@ cowpy
 cryptg
 distro
 dnspython
+doodstream
 emoji==1.7.0
 fonttools
 fake-headers
