@@ -1,11 +1,10 @@
-import asyncio
 import os
 import time
 from telethon.tl.types import DocumentAttributeFilename
 from userbot import APIDOOD, CMD_HELP, bot
 from userbot.events import register
-from userbot.utils import progress
 from doodstream import DoodStream
+from FastTelethonhelper import fast_download
 
 api = APIDOOD
 d = DoodStream(api)
@@ -32,25 +31,20 @@ async def dood(event):
         in reply_message.media.document.attributes
     ):
         return await event.edit("`Unsupported files..`")
-    c_time = time.time()
-    await event.edit("`Downloading media..`")
-    ss = await bot.download_media(
-        reply_message,
-        progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-            progress(d, t, event, c_time, "[DOWNLOAD]")
-        ),
-    )
+    time.time()
+    r = await event.edit("`Downloading media..`")
+    ss = await fast_download(bot, reply_message, r)
     try:
-        await event.edit("`Proccessing..`")
+        await r.edit("`Proccessing..`")
         up = d.local_upload(f"{ss}")
         res = f"Status : {up['status']}\n"
         res += f"Video ID : {up['result'][0]['filecode']}\n"
         res += f"Video Url : {up['result'][0]['download_url']}\n"
         res += f"Splash IMG : {up['result'][0]['splash_img']}"
         os.remove(ss)
-        await event.edit(res)
+        await r.edit(res)
     except BaseException as e:
-        return await event.edit(f"{e}")
+        return await r.edit(f"{e}")
 
 
 @register(outgoing=True, pattern=r"^\.dr ?(.*)")
