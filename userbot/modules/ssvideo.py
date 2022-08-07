@@ -4,14 +4,13 @@
 # you may not use this file except in compliance with the License.
 #
 
-import asyncio
 import os
 import time
 
 from telethon.tl.types import DocumentAttributeFilename
 from userbot import CMD_HELP, bot
 from userbot.events import register
-from userbot.utils import progress
+from FastTelethonhelper import fast_download
 
 
 @register(outgoing=True, pattern=r"^\.ssu(?: |$)(.*)")
@@ -61,15 +60,9 @@ async def ssvideo(event):
         in reply_message.media.document.attributes
     ):
         return await event.edit("`Unsupported files..`")
-    c_time = time.time()
-    await event.edit("`Downloading media..`")
-    ss = await bot.download_media(
-        reply_message,
-        "anu.mp4",
-        progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-            progress(d, t, event, c_time, "[DOWNLOAD]")
-        ),
-    )
+    time.time()
+    reply = await event.edit("`Downloading media..`")
+    ss = await fast_download(bot, reply_message, reply)
     try:
         await event.edit("`Proccessing..`")
         command = f"vcsi -g {frame}x{frame} {ss} -o ss.png "
