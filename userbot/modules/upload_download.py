@@ -246,7 +246,7 @@ async def upload(u_event):
 def get_video_thumb(file, output=None, width=90):
     """ Get video thumbnail """
     metadata = extractMetadata(createParser(file))
-    popen = subprocess.Popen(["noc",
+    popen = subprocess.Popen(["ffmpeg",
                               "-i",
                               file,
                               "-ss",

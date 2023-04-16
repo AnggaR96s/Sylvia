@@ -48,7 +48,7 @@ async def _(event):
             "wc.mp4",
         )
         extractMetadata(createParser(video))
-        os.system("noc -i wc.mp4 -vframes 1 -an -s 480x360 -ss 1 wc.png")
+        os.system("ffmpeg -i wc.mp4 -vframes 1 -an -s 480x360 -ss 1 wc.png")
     else:
         await bot.download_media(
             reply_message,

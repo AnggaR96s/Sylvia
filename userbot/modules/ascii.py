@@ -48,7 +48,7 @@ async def ascii(event):
             "ascii.mp4",
         )
         extractMetadata(createParser(video))
-        os.system("noc -i ascii.mp4 -vframes 1 -an -s 480x360 -ss 1 ascii.png")
+        os.system("ffmpeg -i ascii.mp4 -vframes 1 -an -s 480x360 -ss 1 ascii.png")
         IMG = "ascii.png"
     else:
         IMG = await bot.download_media(

@@ -35,7 +35,7 @@ async def getmusic(cat):
         video_link = i.get_attribute("href")
         break
     command = (
-        f"nocc -x --add-metadata --embed-thumbnail --audio-format mp3 {video_link}"
+        f"yt-dlp -x --add-metadata --embed-thumbnail --audio-format mp3 {video_link}"
     )
     os.system(command)
     return video_link
@@ -50,7 +50,7 @@ async def getmusicvideo(cat):
     for i in user_data:
         video_link = i.get_attribute("href")
         break
-    command = 'nocc -f "[filesize<50M]" --merge-output-format mp4 ' + video_link
+    command = 'yt-dlp -f "[filesize<50M]" --merge-output-format mp4 ' + video_link
     os.system(command)
 
 
@@ -130,7 +130,7 @@ async def _(event):
         if metadata.has("height"):
             height = metadata.get("height")
         os.system("cp *mp4 thumb.mp4")
-        os.system("noc -i thumb.mp4 -vframes 1 -an -s 480x360 -ss 5 thumb.jpg")
+        os.system("ffmpeg -i thumb.mp4 -vframes 1 -an -s 480x360 -ss 5 thumb.jpg")
         thumb_image = "thumb.jpg"
         c_time = time.time()
         with open(loa, "rb") as f:
