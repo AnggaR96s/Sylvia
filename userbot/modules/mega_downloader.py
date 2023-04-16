@@ -194,7 +194,7 @@ async def mega_downloader(megadl):
 
     else:
         await megadl.edit(
-            "`Failed to download, " "check Logs for more details.`"
+            "`Failed to download, " "check heroku Logs for more details.`"
         )
         for e in downloader.get_errors():
             LOGS.info(str(e))
