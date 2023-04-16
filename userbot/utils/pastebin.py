@@ -6,14 +6,12 @@ from aiohttp.client_exceptions import ClientConnectorError
 
 class PasteBin:
 
-    DOGBIN_URL = "https://del.dog/"
-    HASTEBIN_URL = "https://www.toptal.com/developers/hastebin/"
+    HASTEBIN_URL = "https://hastebin.com/documents/"
     NEKOBIN_URL = "https://nekobin.com/"
     KATBIN_URL = "https://katb.in/"
     SPACEBIN_URL = "https://spaceb.in/"
-    _dkey = _hkey = _nkey = _kkey = _skey = retry = None
+    _hkey = _nkey = _kkey = _skey = retry = None
     service_match = {
-        "-d": "dogbin",
         "-n": "nekobin",
         "-h": "hastebin",
         "-k": "katbin",
@@ -27,7 +25,7 @@ class PasteBin:
 
     def __bool__(self):
         return bool(
-            self._dkey or self._nkey or self._hkey or self._kkey or self._skey)
+            self._nkey or self._hkey or self._kkey or self._skey)
 
     async def __aenter__(self):
         return self
@@ -38,17 +36,15 @@ class PasteBin:
     async def close(self):
         await self.http.close()
 
-    async def __call__(self, service="dogbin"):
-        if service == "dogbin":
-            await self._post_dogbin()
+    async def __call__(self, service="spacebin"):
+        if service == "spacebin":
+            await self._post_spacebin()
         elif service == "nekobin":
             await self._post_nekobin()
         elif service == "hastebin":
             await self._post_hastebin()
         elif service == "katbin":
             await self._post_katbin()
-        elif service == "spacebin":
-            await self._post_spacebin()
         else:
             raise KeyError(f"Unknown service input: {service}")
 
@@ -62,21 +58,6 @@ class PasteBin:
                 token = i.group(1)
                 break
         return token
-
-    async def _post_dogbin(self):
-        if self._dkey:
-            return
-        try:
-            async with self.http.post(
-                self.DOGBIN_URL + "documents", data=self.data.encode("utf-8")
-            ) as req:
-                if req.status == 200:
-                    res = await req.json()
-                    self._dkey = res["key"]
-                else:
-                    self.retry = "nekobin"
-        except ClientConnectorError:
-            self.retry = "nekobin"
 
     async def _post_nekobin(self):
         if self._nkey:
@@ -138,11 +119,11 @@ class PasteBin:
                     res = await req.json()
                     self._skey = res["payload"]["id"]
                 else:
-                    self.retry = "dogbin"
+                    self.retry = "katbin"
         except ClientConnectorError:
-            self.retry = "dogbin"
+            self.retry = "katbin"
 
-    async def post(self, serv: str = "dogbin"):
+    async def post(self, serv: str = "spacebin"):
         """Post the initialized data to the pastebin service."""
         if self.retries == 0:
             return
@@ -157,8 +138,6 @@ class PasteBin:
     @property
     def link(self) -> str:
         """Return the view link"""
-        if self._dkey:
-            return self.DOGBIN_URL + self._dkey
         if self._nkey:
             return self.NEKOBIN_URL + self._nkey
         if self._hkey:
@@ -172,8 +151,6 @@ class PasteBin:
     @property
     def raw_link(self) -> str:
         """Return the view raw link"""
-        if self._dkey:
-            return self.DOGBIN_URL + "raw/" + self._dkey
         if self._nkey:
             return self.NEKOBIN_URL + "raw/" + self._nkey
         if self._hkey:

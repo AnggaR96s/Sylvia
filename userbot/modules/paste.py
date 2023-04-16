@@ -13,7 +13,7 @@ from userbot.utils.pastebin import PasteBin
 
 
 @register(outgoing=True,
-          pattern=r"^\.paste(?: (-d|-n|-h|-k|-s)|$)?(?: ([\s\S]+)|$)")
+          pattern=r"^\.paste(?: (-n|-h|-k|-s)|$)?(?: ([\s\S]+)|$)")
 async def paste(pstl):
     """For .paste command, pastes the text directly to a pastebin."""
     service = pstl.pattern_match.group(1)
@@ -46,7 +46,7 @@ async def paste(pstl):
     async with PasteBin(message) as client:
         if service:
             service = service.strip()
-            if service not in ["-d", "-n", "-h", "-k", "-s"]:
+            if service not in ["-n", "-h", "-k", "-s"]:
                 return await pstl.edit("Invalid flag")
             await client(client.service_match[service])
         else:
@@ -68,4 +68,4 @@ CMD_HELP.update(
     {
         "paste": "`.paste` [flags] <text/reply>"
         "\nUsage: Create a paste to a pastebin service flags ['-d', '-n', '-h', '-k', '-s']"
-        "\n\n-d -> Dogbin\n-n -> Nekobin\n-h -> Hastebin\n-k -> Katbin\n-s -> Spacebin"})
+        "\n\n-n -> Nekobin\n-h -> Hastebin\n-k -> Katbin\n-s -> Spacebin"})
