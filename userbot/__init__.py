@@ -249,6 +249,7 @@ BOT_VERSION = "DCLXVI-Slav01"
 # Setting Up CloudMail.ru and MEGA.nz extractor binaries,
 # and giving them correct perms to work properly.
 
+
 def migration_workaround():
     try:
         from userbot.modules.sql_helper.globals import addgvar, delgvar, gvarstatus
