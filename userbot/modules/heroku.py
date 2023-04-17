@@ -3,16 +3,15 @@
 """
    Heroku manager for your userbot
 """
-import codecs
 import math
 import os
 
 import aiohttp
 import heroku3
 
-from requests import post
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, HEROKU_API_KEY, HEROKU_APP_NAME
 from userbot.events import register
+from userbot.utils.pastebin import PasteBin
 
 heroku_api = "https://api.heroku.com"
 if HEROKU_APP_NAME is not None and HEROKU_API_KEY is not None:
@@ -185,22 +184,19 @@ async def dyno_usage(dyno):
 async def _(dyno):
     try:
         Heroku = heroku3.from_key(HEROKU_API_KEY)
-        app = Heroku.app(HEROKU_APP_NAME)
+        Heroku.app(HEROKU_APP_NAME)
     except BaseException:
         return await dyno.reply(
             "`Please make sure your Heroku API Key, Your App name are configured correctly in the heroku var.`"
         )
     await dyno.edit("`Getting Logs....`")
-    with open("logs.txt", "w") as log:
-        log.write(app.get_log())
-    fd = codecs.open("logs.txt", "r", encoding="utf-8")
-    log = fd.read()
-    SLAVBIN_URL = "https://slav.gengkapak.my.id/"
-    resp = post(SLAVBIN_URL + "documents", data=log.encode("utf-8"))
-    response = resp.json()
-    key = response["key"]
-    final_log = SLAVBIN_URL + key
-    await dyno.edit(f"`Here the heroku logs:`\n\nPasted to: [SlavBin]({final_log})")
+    with open("logs.txt", "w+") as file:
+        file.write(ftext)
+    async with PasteBin(ftext) as client:
+        await client.post()
+        if client:
+            text += f"\n\nPasted to : [URL]({client.raw_link})"
+    await dyno.edit(f"`Here the heroku logs:`\n\nPasted to: {text}")
     return os.remove("logs.txt")
 
 
