@@ -79,9 +79,9 @@ async def carbon_api(e):
         pcode = str(textx.message)  # Importing message to module
     code = quote_plus(pcode)  # Converting to urlencoded
     await e.edit("`Processing...\n25%`")
-    file_path = TEMP_DOWNLOAD_DIRECTORY + "carbon.png"
+    file = "./carbon.png"
     if os.path.isfile(file_path):
-        os.remove(file_path)
+        os.remove(file)
     url = CARBON.format(code=code, lang=CARBONLANG)
     driver = await chrome()
     driver.get(url)
@@ -89,18 +89,18 @@ async def carbon_api(e):
     driver.find_element("xpath", "//button[contains(text(),'Export')]").click()
     await e.edit("`Processing...\n75%`")
     # Waiting for downloading
-    while not os.path.isfile(file_path):
+    while not os.path.isfile(file):
         await sleep(0.5)
     await e.edit("`Processing...\n100%`")
     await e.edit("`Uploading...`")
     await e.client.send_file(
         e.chat_id,
-        file_path,
+        file,
         force_document=False,
         reply_to=e.message.reply_to_msg_id,
     )
 
-    os.remove(file_path)
+    os.remove(file)
     driver.quit()
     # Removing carbon.png after uploading
     await e.delete()  # Deleting msg
