@@ -193,7 +193,7 @@ G_DRIVE_FOLDER_ID = os.environ.get("G_DRIVE_FOLDER_ID", None)
 
 # Download directory location
 TEMP_DOWNLOAD_DIRECTORY = os.environ.get(
-    "TMP_DOWNLOAD_DIRECTORY", "./downloads")
+    "TMP_DOWNLOAD_DIRECTORY", "./dl")
 
 # Terminal Alias
 TERM_ALIAS = os.environ.get("TERM_ALIAS", None)

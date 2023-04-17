@@ -80,7 +80,7 @@ async def carbon_api(e):
     code = quote_plus(pcode)  # Converting to urlencoded
     await e.edit("`Processing...\n25%`")
     file = "./carbon.png"
-    if os.path.isfile(file_path):
+    if os.path.isfile(file):
         os.remove(file)
     url = CARBON.format(code=code, lang=CARBONLANG)
     driver = await chrome()
