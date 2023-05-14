@@ -3,6 +3,7 @@
 """
    Heroku manager for your userbot
 """
+import codecs
 import math
 import os
 
@@ -190,13 +191,15 @@ async def _(dyno):
             "`Please make sure your Heroku API Key, Your App name are configured correctly in the heroku var.`"
         )
     await dyno.edit("`Getting Logs....`")
-    with open("logs.txt", "w+") as file:
-        file.write(ftext)
-    async with PasteBin(ftext) as client:
+    with open("logs.txt", "w") as log:
+        log.write(app.get_log())
+    fd = codecs.open("logs.txt", "r", encoding="utf-8")
+    log = fd.read()
+    async with PasteBin(log) as client:
         await client.post()
         if client:
-            text += f"\n\nPasted to : [URL]({client.raw_link})"
-    await dyno.edit(f"`Here the heroku logs:`\n\nPasted to: {text}")
+            text = f"Pasted to : [URL]({client.raw_link})"
+    await dyno.edit(f"`Here the heroku logs:`\n\n{text}", link_preview=False)
     return os.remove("logs.txt")
 
 
