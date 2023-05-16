@@ -1,4 +1,4 @@
-FROM gengkapak/kinetic:userbot
+FROM gengkapak/mantic:userbot
 
 #
 # Clone repo and prepare working directory
